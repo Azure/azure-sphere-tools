@@ -1,14 +1,13 @@
-# Project
+# Azure Sphere Tools
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repository contains tools created and maintained by Microsoft for application developers and manufacturers working with the 
+[Azure Sphere platform](https://www.microsoft.com/azure-sphere/).
 
-As the maintainer of this project, please make a few updates:
+You may also be interested in:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+- https://github.com/Azure/azure-sphere-samples/ - maintained developer samples, tutorials and code snippets for Azure Sphere
+- https://github.com/Azure/azure-sphere-hardware-designs/ - maintained hardware designs for Azure Sphere
+- https://github.com/Azure/azure-sphere-gallery/ - gallery of further unmaintained content from Microsoft
 
 ## Contributing
 
