@@ -25,7 +25,7 @@ dotnet add $TestProject package Microsoft.Azure.Sphere.DeviceAPI -s $Feed
 
 Write-Host "::debug::Restoring packages for test project"
 
-dotnet restore $TestProject -s https://pkgs.dev.azure.com/msazuresphere/4x4/_packaging/4x4_PublicPackages/nuget/v3/index.json
+dotnet restore $TestProject
 
 Write-Host "::debug::Building test project"
 
