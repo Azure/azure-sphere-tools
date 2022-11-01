@@ -21,8 +21,14 @@ function Invoke-Dotnet()
     }
 }
 
-function Build-Package($root, $outputFolder, $version)
+function Build-Package
 {
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+    )
+
     Write-Host "Working in: ${root}"
     $package = Join-Path $root "Nuget" "Package"
     Write-Host "Building project at: ${package}"
@@ -30,25 +36,55 @@ function Build-Package($root, $outputFolder, $version)
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
 
-function Build-Tests($root, $feed, $version)
+function Build-WithLocalPackage
 {
-    $testProject = Join-Path $root Nuget Tests DeviceAPITest DeviceAPITest DeviceAPITest.csproj
-    Write-Host "Building test project at ${testProject}"
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+    )
+
+    Write-Host "Building project at ${project}"
     Write-Host "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
-    Invoke-Dotnet nuget add source $feed
-    Invoke-Dotnet remove $testProject package Microsoft.Azure.Sphere.DeviceAPI
-    Invoke-Dotnet add $testProject package Microsoft.Azure.Sphere.DeviceAPI --version $version
-    Invoke-Dotnet restore $testProject
-    Write-Host "Building ${testProject}"
-    Invoke-Dotnet build $testProject
+    Invoke-Dotnet nuget add source $feed -n "LocalFeed"
+    Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
+    Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
+    Invoke-Dotnet restore $project
+    Write-Host "Building ${project}"
+    Invoke-Dotnet build $project
+    Invoke-Dotnet nuget remove source "LocalFeed"
+}
+
+function Build-Tests
+{
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+    )
+
+    $testProject = Join-Path $root Nuget Tests DeviceAPITest DeviceAPITest DeviceAPITest.csproj
+    Build-WithLocalPackage $testProject $feed $version
+}
+
+function Build-Sample
+{
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+    )
+
+    $sample = Join-Path $root DeviceAPISample DeviceAPISample.csproj
+    Build-WithLocalPackage $sample $feed $version
 }
 
 if (-not $PackageVersion) {
-    $version = "0.0.0.0-ci"
+    $Version = "0.0.0-ci"
 } else {
-    $version = "${PackageVersion}"
+    $Version = "${PackageVersion}"
     if ($PackageVersionSuffix) {
-        $version += "-${PackageVersionSuffix}"
+        $Version += "-${PackageVersionSuffix}"
     }
 }
 
@@ -68,8 +104,9 @@ $PathToManufacturing = Join-Path -Resolve $PSScriptRoot ".." "Manufacturing"
 
 $CSharp = Join-Path -Resolve $PathToManufacturing "src" "CSharp"
 
-Build-Package $CSharp $Feed $version
-Build-Tests $CSharp $Feed $version
+Build-Package $CSharp $Feed $Version
+Build-Tests $CSharp $Feed $Version
+Build-Sample $CSharp $Feed $Version
 
 if (-not $WorkingFolder) {
     Remove-Item -Recurse $WorkingFolder
