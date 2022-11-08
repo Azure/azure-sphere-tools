@@ -8,3 +8,5 @@ ENV DOTNET_ROOT /root/.dotnet
 ENV PATH $PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
 RUN dotnet tool install --global PowerShell
+
+RUN apt-get install -y python3 python3-pip python3-venv
