@@ -1,0 +1,22 @@
+name: $(date:yyyyMMdd)$(rev:.rr)-$(BuildID)
+
+resources:
+  repositories:
+  - repository: self
+    clean: true
+  - repository: SdkBuildScripts
+    clean: true
+    name: SdkBuildScripts
+    type: git
+    ref: chwhitwo/azure-sphere-tools
+
+trigger:
+  branches:
+    include:
+    - main
+    - release/*
+    - chwhitwo/manufacturing-tools
+
+steps:
+- checkout: self
+- checkout: SdkBuildScripts
