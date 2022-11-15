@@ -17,6 +17,5 @@ trigger:
     - release/*
     - chwhitwo/manufacturing-tools
 
-steps:
-- checkout: self
-- checkout: SdkBuildScripts
+extends:
+  template: templates/yaml/azure-sphere-tools/azure-sphere-tools.yml@SdkBuildScripts
