@@ -29,9 +29,9 @@ function Build-Package
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
 
-    Write-Host "Working in: ${root}"
+    Write-Output "Working in: ${root}"
     $package = Join-Path $root "Nuget" "Package"
-    Write-Host "Building project at: ${package}"
+    Write-Output "Building project at: ${package}"
     Invoke-Dotnet build $package
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
@@ -44,13 +44,13 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
 
-    Write-Host "Building project at ${project}"
-    Write-Host "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
+    Write-Output "Building project at ${project}"
+    Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
     Invoke-Dotnet nuget add source $feed -n "LocalFeed"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
     Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
     Invoke-Dotnet restore $project
-    Write-Host "Building ${project}"
+    Write-Output "Building ${project}"
     Invoke-Dotnet build $project
     Invoke-Dotnet nuget remove source "LocalFeed"
 }
@@ -94,11 +94,11 @@ if (-not $WorkingFolder) {
     New-Item -ItemType Directory -Path $WorkingFolder | Out-Null
 }
 
-Write-Host "Using working folder ${WorkingFolder}"
+Write-Output "Using working folder ${WorkingFolder}"
 
 $Feed = Join-Path $WorkingFolder "feed"
 
-Write-Host "Package feed at ${Feed}"
+Write-Output "Package feed at ${Feed}"
 
 $PathToManufacturing = Join-Path -Resolve $PSScriptRoot ".." "Manufacturing"
 
