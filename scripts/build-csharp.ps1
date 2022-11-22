@@ -32,7 +32,7 @@ function Build-Package
     Write-Output "Working in: ${root}"
     $package = Join-Path $root "Nuget" "Package"
     Write-Output "Building project at: ${package}"
-    Invoke-Dotnet build $package
+    Invoke-Dotnet build -p:PackageVersion=$version $package
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
 
@@ -52,6 +52,8 @@ function Build-WithLocalPackage
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
     Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
     Invoke-Dotnet restore $project
+    Write-Output "Using packages:"
+    Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
     Invoke-Dotnet build $project
     Invoke-Dotnet nuget remove source "LocalFeed"
@@ -107,6 +109,7 @@ $PathToManufacturing = Join-Path -Resolve $PSScriptRoot ".." "Manufacturing"
 $CSharp = Join-Path -Resolve $PathToManufacturing "src" "CSharp"
 
 Build-Package $CSharp $Feed $Version
+
 Build-Tests $CSharp $Feed $Version
 Build-Sample $CSharp $Feed $Version
 
