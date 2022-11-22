@@ -43,10 +43,12 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
+    Write-Output "Adding local feed:"
+    Invoke-Dotnet nuget add source $feed -n "LocalFeed"
+    Invoke-Dotnet nuget list source
 
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
-    Invoke-Dotnet nuget add source $feed -n "LocalFeed"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
     Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
     Invoke-Dotnet restore $project
@@ -80,7 +82,7 @@ function Build-Sample
 }
 
 if (-not $PackageVersion) {
-    $Version = "0.0.0-ci"
+    $Version = "999.0.0-ci"
 } else {
     $Version = "${PackageVersion}"
     if ($PackageVersionSuffix) {
