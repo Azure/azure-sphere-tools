@@ -45,9 +45,10 @@ function Build-WithLocalPackage
     )
     Write-Output "Adding local feed:"
     Invoke-Dotnet nuget add source $feed -n "LocalFeed"
-    Invoke-Dotnet nuget list source
+    Invoke-Dotnet nuget list source -v fq
 
     Write-Output "Building project at ${project}"
+    Invoke-Dotnet restore $project -v n -f
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
     Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
