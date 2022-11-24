@@ -25,6 +25,11 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: latest
+
     - name: Run C# build
       shell: pwsh
       run: |

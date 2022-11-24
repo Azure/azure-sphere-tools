@@ -21,6 +21,21 @@ function Invoke-Dotnet()
     }
 }
 
+function Invoke-Nuget()
+{
+    if ($args.Count -eq 0) {
+        throw "Must supply args to nuget command"
+    }
+
+    & nuget $args
+
+    $result = $LASTEXITCODE
+
+    if ($result -ne 0) {
+        throw "dotnet ${args} exited with result code ${result}"
+    }
+}
+
 function Build-Package
 {
     param(
@@ -33,7 +48,7 @@ function Build-Package
     $package = Join-Path $root "Nuget" "Package"
     Write-Output "Building project at: ${package}"
     Invoke-Dotnet restore -v n -f $package 
-    Invoke-Dotnet build -p:PackageVersion=$version $package
+    Invoke-Dotnet build -p:PackageVersion=$version --verbosity normal $package
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
 
@@ -45,20 +60,19 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
     Write-Output "Adding local feed:"
-    Invoke-Dotnet nuget add source $feed -n "LocalFeed"
-    Invoke-Dotnet nuget list source
+    Invoke-Nuget sources
+    Invoke-Nuget sources add -name "LocalFeed" -Source $feed
+    Invoke-Nuget sources
 
     Write-Output "Building project at ${project}"
-    Invoke-Dotnet restore -v n -f $project 
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
     Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
-    Invoke-Dotnet restore -v n -f $project
     Write-Output "Using packages:"
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
-    Invoke-Dotnet build $project
-    Invoke-Dotnet nuget remove source "LocalFeed"
+    Invoke-Dotnet build $project --verbosity normal
+    Invoke-Nuget sources remove -name "LocalFeed"
 }
 
 function Build-Tests
