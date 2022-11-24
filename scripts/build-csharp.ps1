@@ -67,7 +67,7 @@ function Build-WithLocalPackage
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
-    Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version
+    Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --prerelease --version $version
     Write-Output "Using packages:"
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
