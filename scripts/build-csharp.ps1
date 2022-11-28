@@ -112,10 +112,6 @@ if (-not $PackageVersion) {
     }
 }
 
-$oldPwd = pwd
-
-cd $(Join-Path -Resolve $PSScriptRoot "..")
-
 if (-not $WorkingFolder) {
     $TempFolder = [System.IO.Path]::GetTempPath()
     $WorkingFolder = Join-Path $TempFolder $([string] [System.Guid]::NewGuid())
@@ -148,6 +144,4 @@ finally {
     if (-not $WorkingFolder) {
         Remove-Item -Recurse $WorkingFolder
     }
-
-    cd $oldPwd
 }
