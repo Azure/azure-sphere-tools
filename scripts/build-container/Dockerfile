@@ -7,6 +7,7 @@ RUN curl -sSL https://dot.net/v1/dotnet-install.sh | bash
 ENV DOTNET_ROOT /root/.dotnet
 ENV PATH $PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
-RUN dotnet tool install --global PowerShell
+RUN dotnet tool install --global PowerShell --version 7.2.7
+
 
 RUN apt-get install -y python3 python3-pip python3-venv
