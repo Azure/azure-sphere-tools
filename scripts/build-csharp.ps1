@@ -21,21 +21,6 @@ function Invoke-Dotnet()
     }
 }
 
-function Invoke-Nuget()
-{
-    if ($args.Count -eq 0) {
-        throw "Must supply args to nuget command"
-    }
-
-    & nuget $args
-
-    $result = $LASTEXITCODE
-
-    if ($result -ne 0) {
-        throw "dotnet ${args} exited with result code ${result}"
-    }
-}
-
 function Build-Package
 {
     param(
@@ -52,6 +37,23 @@ function Build-Package
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
 
+function Publish-Package
+{
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+    )
+
+    $packages = Get-ChildItem -Filter "*.nupkg" $outputFolder
+    if ($packages.Count -ne 1) {
+        throw "Found more than one package, which was unexpected: ${packages}"
+    }
+
+    copy-item $packages.FullName -Destination $Feed
+}
+
 function Build-WithLocalPackage
 {
     param(
@@ -60,19 +62,21 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
     Write-Output "Adding local feed:"
-    Invoke-Nuget sources
-    Invoke-Nuget sources add -name "LocalFeed" -Source $feed
-    Invoke-Nuget sources
+    Invoke-Dotnet nuget add source $feed --name "LocalFeed"
+
+    Invoke-Dotnet nuget list source
 
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
     Invoke-Dotnet remove $project package Microsoft.Azure.Sphere.DeviceAPI
-    Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --prerelease --version $version
+    Invoke-Dotnet add $project package Microsoft.Azure.Sphere.DeviceAPI --version $version --no-restore
+    Invoke-Dotnet restore $project --verbosity normal 
+
     Write-Output "Using packages:"
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
     Invoke-Dotnet build $project --verbosity normal
-    Invoke-Nuget sources remove -name "LocalFeed"
+    Invoke-Dotnet nuget remove source LocalFeed
 }
 
 function Build-Tests
@@ -100,7 +104,7 @@ function Build-Sample
 }
 
 if (-not $PackageVersion) {
-    $Version = "999.0.0-ci"
+    $Version = "1.0.1.1234-ci"
 } else {
     $Version = "${PackageVersion}"
     if ($PackageVersionSuffix) {
@@ -108,27 +112,42 @@ if (-not $PackageVersion) {
     }
 }
 
+$oldPwd = pwd
+
+cd $(Join-Path -Resolve $PSScriptRoot "..")
+
 if (-not $WorkingFolder) {
     $TempFolder = [System.IO.Path]::GetTempPath()
     $WorkingFolder = Join-Path $TempFolder $([string] [System.Guid]::NewGuid())
     New-Item -ItemType Directory -Path $WorkingFolder | Out-Null
 }
 
-Write-Output "Using working folder ${WorkingFolder}"
+try {
+    Write-Output "Using working folder ${WorkingFolder}"
 
-$Feed = Join-Path $WorkingFolder "feed"
+    $Feed = Join-Path $WorkingFolder "feed"
+    $Build = Join-Path $WorkingFolder "build"
 
-Write-Output "Package feed at ${Feed}"
+    New-Item $Feed -ItemType Directory | Out-Null
+    New-Item $Build -ItemType Directory | Out-Null
 
-$PathToManufacturing = Join-Path -Resolve $PSScriptRoot ".." "Manufacturing"
+    Write-Output "Package feed at ${Feed}"
+    Write-Output "Build folder at ${Build}"
 
-$CSharp = Join-Path -Resolve $PathToManufacturing "src" "CSharp"
+    $PathToManufacturing = Join-Path -Resolve $PSScriptRoot ".." "Manufacturing"
 
-Build-Package $CSharp $Feed $Version
+    $CSharp = Join-Path -Resolve $PathToManufacturing "src" "CSharp"
 
-Build-Tests $CSharp $Feed $Version
-Build-Sample $CSharp $Feed $Version
+    Build-Package $CSharp $Build $Version
+    Publish-Package $CSharp $Build $Feed $Version
 
-if (-not $WorkingFolder) {
-    Remove-Item -Recurse $WorkingFolder
+    Build-Tests $CSharp $Feed $Version
+    Build-Sample $CSharp $Feed $Version
+}
+finally {
+    if (-not $WorkingFolder) {
+        Remove-Item -Recurse $WorkingFolder
+    }
+
+    cd $oldPwd
 }
