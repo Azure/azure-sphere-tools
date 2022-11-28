@@ -23,7 +23,7 @@ stages:
   dependsOn:
   
   jobs:
-  - template: check-yaml-definitions.yml@SdkBuildScripts
+  - template: templates/yaml/azure-sphere-tools/check-yaml-definitions.yml@SdkBuildScripts
 
 - stage: DotNetPackage
   displayName: Build and sign C# package
