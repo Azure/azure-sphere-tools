@@ -46,13 +46,25 @@ stages:
     steps:
     - checkout: self
 
+    - task: PowerShell@2
+      displayName: "Enable internal nuget.config"
+      inputs:
+        pwsh: true
+        targetType: inline
+        script: |
+          git mv $(Build.SourcesDirectory)\nuget.config.internal $(Build.SourcesDirectory)\nuget.config 
+
     - task: nuget-security-analysis@0
+      displayName: "Secure Supply Chain Analysis (manual)"
 
     - task: UseDotNet@2
       displayName: "Install .NET Core SDK"
       inputs:
         version: 6.0.x
         performMultiLevelLookup: true
+
+    - task: NuGetAuthenticate@1
+    - task: NuGetToolInstaller@1
 
     - task: PowerShell@2
       displayName: "Run build script"
