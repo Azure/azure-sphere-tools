@@ -9,6 +9,8 @@ param(
 Set-StrictMode -Version Latest
 Import-Module -Name $(Join-Path $PSScriptRoot PackageBuild.psm1 -Resolve)
 
+Set-Location $(Join-Path $PSScriptRoot "..")
+
 if (-not $PackageVersion) {
     $Version = "1.0.1.1234-ci"
 } else {
