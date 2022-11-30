@@ -60,7 +60,8 @@ function Publish-LocalPackage
 function Find-NugetConfigs
 {
     param(
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project,
+        [Parameter()] [switch] $firstOnly
     )
 
     $configs = @()
@@ -68,7 +69,11 @@ function Find-NugetConfigs
     while($dir) {
         $config = Join-Path $dir Nuget.config
         if (Test-Path $config) {
-            $configs += $config
+            if ($firstOnly) {
+                return $config
+            } else {
+                $configs += $config
+            }
         }
         $dir = Split-Path -Resolve $dir
     }
@@ -83,22 +88,18 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
-    Write-Output "Adding local feed:"
-    Invoke-Dotnet nuget add source $feed --name "LocalFeed"
 
-    $localConfigs = Find-NugetConfigs $(Get-Location)
-    foreach($config in $localConfigs) {
-        Write-Output "Config: $config"
-        cat $config
-        Write-Output "--------------------------"
+    $config = Find-NugetConfigs $project -firstOnly
+
+    if (-not $config) {
+        throw "Cannot find nuget.config from $project"
     }
+
+    Write-Output "Adding local feed to ${config}:"
+
+    Invoke-Dotnet nuget add source $feed --name "LocalFeed" --configfile $config
 
     Invoke-Dotnet nuget list source
-    foreach($config in $(Find-NugetConfigs $project)) {
-        Write-Output "Config: $config"
-        cat $config
-        Write-Output "--------------------------"
-    }
 
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
