@@ -17,7 +17,6 @@ function Build-Library
 {
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
     )
 

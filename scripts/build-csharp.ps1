@@ -9,6 +9,8 @@ param(
 Set-StrictMode -Version Latest
 Import-Module -Name $(Join-Path $PSScriptRoot PackageBuild.psm1 -Resolve)
 
+Set-Location $(Join-Path $PSScriptRoot "..")
+
 if (-not $PackageVersion) {
     $Version = "1.0.1.1234-ci"
 } else {
@@ -40,7 +42,7 @@ try {
 
     $CSharp = Join-Path -Resolve $PathToManufacturing "src" "CSharp"
 
-    Build-Library $CSharp $Build $Version
+    Build-Library $CSharp $Version
     Build-LibraryPackage $CSharp $Build $Version
     Publish-LocalPackage $CSharp $Build $Feed $Version
 
