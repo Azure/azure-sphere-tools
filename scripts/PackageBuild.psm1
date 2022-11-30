@@ -57,6 +57,25 @@ function Publish-LocalPackage
     copy-item $packages.FullName -Destination $Feed
 }
 
+function Find-NugetConfigs
+{
+    param(
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project
+    )
+
+    $configs = @()
+    $dir = Split-Path -Resolve $project
+    while($dir) {
+        $config = Join-Path $dir Nuget.config
+        if (Test-Path $config) {
+            $configs += $config
+        }
+        $dir = Split-Path -Resolve $dir
+    }
+
+    $configs
+}
+
 function Build-WithLocalPackage
 {
     param(
@@ -68,6 +87,11 @@ function Build-WithLocalPackage
     Invoke-Dotnet nuget add source $feed --name "LocalFeed"
 
     Invoke-Dotnet nuget list source
+    foreach($config in $(Find-NugetConfigs $project)) {
+        Write-Output "Config: $config"
+        cat $config
+        Write-Output "--------------------------"
+    }
 
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
@@ -111,4 +135,5 @@ Export-ModuleMember `
     Build-LibraryPackage, `
     Publish-LocalPackage, `
     Build-Tests, `
-    Build-Sample
+    Build-Sample,
+    Find-NugetConfigs
