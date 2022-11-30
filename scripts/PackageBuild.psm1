@@ -92,14 +92,14 @@ function Build-WithLocalPackage
     $config = Find-NugetConfigs $project -firstOnly
 
     if (-not $config) {
-        throw "Cannot find nuget.config from $project"
+        Write-Output "Cannot find nuget.config in $project directory hierarchy; falling back to default"
+        Invoke-Dotnet nuget add source $feed --name "LocalFeed"
+        Invoke-Dotnet nuget list source
+    } else {
+        Write-Output "Adding local feed ${config}:"
+        Invoke-Dotnet nuget add source $feed --name "LocalFeed" --configfile $config
+        Invoke-Dotnet nuget list source --configfile $config
     }
-
-    Write-Output "Adding local feed to ${config}:"
-
-    Invoke-Dotnet nuget add source $feed --name "LocalFeed" --configfile $config
-
-    Invoke-Dotnet nuget list source
 
     Write-Output "Building project at ${project}"
     Write-Output "Replacing Microsoft.Azure.Sphere.DeviceAPI package with one at ${feed}"
@@ -111,7 +111,13 @@ function Build-WithLocalPackage
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
     Invoke-Dotnet build $project --verbosity normal
-    Invoke-Dotnet nuget remove source LocalFeed
+
+    Write-Output "Removing local feed"
+    if (-not $config) {
+        Invoke-Dotnet nuget remove source "LocalFeed"
+    } else {
+        Invoke-Dotnet nuget remove source "LocalFeed" --configfile $config
+    }
 }
 
 function Build-Tests
