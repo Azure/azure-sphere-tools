@@ -86,6 +86,13 @@ function Build-WithLocalPackage
     Write-Output "Adding local feed:"
     Invoke-Dotnet nuget add source $feed --name "LocalFeed"
 
+    $localConfigs = Find-NugetConfigs $(Get-Location)
+    foreach($config in $localConfigs) {
+        Write-Output "Config: $config"
+        cat $config
+        Write-Output "--------------------------"
+    }
+
     Invoke-Dotnet nuget list source
     foreach($config in $(Find-NugetConfigs $project)) {
         Write-Output "Config: $config"
