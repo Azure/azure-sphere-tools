@@ -85,7 +85,8 @@ function Build-WithLocalPackage
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
+        [Parameter()] [string] $publishLocation
     )
 
     $config = Find-NugetConfigs $project -firstOnly
@@ -111,6 +112,11 @@ function Build-WithLocalPackage
     Write-Output "Building ${project}"
     Invoke-Dotnet build $project --verbosity normal
 
+    Write-Output "Publishing to $publishLocation"
+    if ($publishLocation) {
+        Invoke-Dotnet publish $project --verbosity normal --output $publishLocation
+    }
+
     Write-Output "Removing local feed"
     if (-not $config) {
         Invoke-Dotnet nuget remove source "LocalFeed"
@@ -124,11 +130,12 @@ function Build-Tests
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
+        [Parameter()] [string] $publishLocation
     )
 
     $testProject = Join-Path $root Nuget Tests DeviceAPITest DeviceAPITest DeviceAPITest.csproj
-    Build-WithLocalPackage $testProject $feed $version
+    Build-WithLocalPackage $testProject $feed $version $(Join-Path $publishLocation tests)
 }
 
 function Build-Sample
@@ -136,11 +143,12 @@ function Build-Sample
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
+        [Parameter()] [string] $publishLocation
     )
 
     $sample = Join-Path $root DeviceAPISample DeviceAPISample.csproj
-    Build-WithLocalPackage $sample $feed $version
+    Build-WithLocalPackage $sample $feed $version $(Join-Path $publishLocation sample)
 }
 
 Export-ModuleMember `
