@@ -135,7 +135,11 @@ function Build-Tests
     )
 
     $testProject = Join-Path $root Nuget Tests DeviceAPITest DeviceAPITest DeviceAPITest.csproj
-    Build-WithLocalPackage $testProject $feed $version $(Join-Path $publishLocation tests)
+    if ($publishLocation) {
+        Build-WithLocalPackage $testProject $feed $version $(Join-Path $publishLocation tests)
+    } else {
+        Build-WithLocalPackage $testProject $feed $version
+    }
 }
 
 function Build-Sample
@@ -148,7 +152,11 @@ function Build-Sample
     )
 
     $sample = Join-Path $root DeviceAPISample DeviceAPISample.csproj
-    Build-WithLocalPackage $sample $feed $version $(Join-Path $publishLocation sample)
+    if ($publishLocation) {
+        Build-WithLocalPackage $sample $feed $version $(Join-Path $publishLocation sample)
+    } else {
+        Build-WithLocalPackage $sample $feed $version
+    }
 }
 
 Export-ModuleMember `
