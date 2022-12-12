@@ -75,17 +75,24 @@ namespace TestDeviceRestAPI.Helpers
         /// <returns>The path to the file as a string.</returns>
         private static string GetFileFromHelpers(string folder, string fileName)
         {
-            DirectoryInfo parentDirectory =
-                Directory.GetParent(Environment.CurrentDirectory).Parent.Parent;
+            string pemDirectory = Environment.GetEnvironmentVariable("TestHelpers");
 
-            // Check if directory exists
-            if (parentDirectory == null)
+            if (pemDirectory == null)
             {
-                throw new InvalidOperationException("Project layout is unexpected.");
-            }
+                DirectoryInfo parentDirectory =
+                    Directory.GetParent(Environment.CurrentDirectory).Parent.Parent;
 
-            string pemDirectory = parentDirectory.FullName;
-            return Path.Combine(pemDirectory, $"Helpers\\{folder}\\{fileName}");
+                // Check if directory exists
+                if (parentDirectory == null)
+                {
+                    throw new InvalidOperationException("Project layout is unexpected.");
+                }
+
+                pemDirectory = Path.Combine(parentDirectory.FullName, "Helpers");
+            }
+            string outputPath = Path.Combine(pemDirectory, $"{folder}\\{fileName}");
+            Console.WriteLine("Path: " + outputPath);
+            return outputPath;
         }
 
         /// <summary>Removes all applications except gdbserver.<summary>
