@@ -48,12 +48,12 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
             SinceDeviceAPIVersion.ValidateDeviceApiVersion("StageImage");
             if (string.IsNullOrEmpty(imageLocation))
             {
-                throw new ValidationError("Cannot stage image, image location is null or empty.");
+                throw new ValidationError("Cannot stage image, image location is null or empty. " + imageLocation);
             }
 
             if (!File.Exists(imageLocation))
             {
-                throw new ValidationError("Cannot stage image, image location does not exist or is not accessible.");
+                throw new ValidationError("Cannot stage image, image location does not exist or is not accessible. " + imageLocation);
             }
 
             byte[] imagePackageBytes = File.ReadAllBytes(imageLocation);
