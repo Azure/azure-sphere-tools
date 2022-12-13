@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Microsoft.Azure.Sphere.DeviceAPI;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace TestDeviceRestAPI.Helpers
 {
@@ -75,21 +76,8 @@ namespace TestDeviceRestAPI.Helpers
         /// <returns>The path to the file as a string.</returns>
         private static string GetFileFromHelpers(string folder, string fileName)
         {
-            string pemDirectory = Environment.GetEnvironmentVariable("TestHelpers");
+            string pemDirectory = Assembly.GetExecutingAssembly().Location;
 
-            if (pemDirectory == null)
-            {
-                DirectoryInfo parentDirectory =
-                    Directory.GetParent(Environment.CurrentDirectory).Parent.Parent;
-
-                // Check if directory exists
-                if (parentDirectory == null)
-                {
-                    throw new InvalidOperationException("Project layout is unexpected.");
-                }
-
-                pemDirectory = Path.Combine(parentDirectory.FullName, "Helpers");
-            }
             string outputPath = Path.Combine(pemDirectory, $"{folder}\\{fileName}");
             Console.WriteLine("Path: " + outputPath);
             return outputPath;

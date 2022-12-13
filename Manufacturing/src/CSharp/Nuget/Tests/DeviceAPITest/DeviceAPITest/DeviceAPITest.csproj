@@ -17,4 +17,14 @@
 		<PackageReference Include="System.Management.Automation" Version="7.2.5" />
 	</ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Helpers\Certificates\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>  
+    <Content Include="Helpers\Images\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>  
+  </ItemGroup>
 </Project>
