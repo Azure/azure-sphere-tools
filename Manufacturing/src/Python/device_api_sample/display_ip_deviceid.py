@@ -1,13 +1,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from azuresphere_device_api import device, devices
+from azuresphere_device_api import device, devices, version
 from azuresphere_device_api.exceptions import AzureSphereDeviceApiException
 from requests.exceptions import ConnectionError, RequestException, Timeout
 
 
 def main():
     print("Azure Sphere Device API Sample.")
+    print(f"Package version is: {version}")
     print("Gets a list of attached devices, displays the IP address and Device ID")
     try:
         device_list = devices.get_attached_devices()

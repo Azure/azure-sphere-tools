@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Microsoft.Azure.Sphere.DeviceAPI;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace TestDeviceRestAPI.Helpers
 {
@@ -76,11 +75,9 @@ namespace TestDeviceRestAPI.Helpers
         /// <returns>The path to the file as a string.</returns>
         private static string GetFileFromHelpers(string folder, string fileName)
         {
-            string pemDirectory = Assembly.GetExecutingAssembly().Location;
+            string helpersDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            string outputPath = Path.Combine(pemDirectory, $"{folder}\\{fileName}");
-            Console.WriteLine("Path: " + outputPath);
-            return outputPath;
+            return Path.Combine(helpersDirectory, $"Helpers\\{folder}\\{fileName}");
         }
 
         /// <summary>Removes all applications except gdbserver.<summary>
