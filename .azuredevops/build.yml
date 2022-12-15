@@ -18,4 +18,4 @@ trigger:
     - chwhitwo/manufacturing-tools
 
 extends:
-  template: templates/yaml/azure-sphere-tools/azure-sphere-tools.yml@SdkBuildScripts
+  template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
