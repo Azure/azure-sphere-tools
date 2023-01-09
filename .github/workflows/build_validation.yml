@@ -2,7 +2,7 @@ name: build
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, prerelease ]
 
 env:
   DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
