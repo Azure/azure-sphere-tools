@@ -20,7 +20,7 @@ Optional package version suffix to use
 param(
     [Parameter()] [string] [ValidateNotNullOrEmpty()] $WorkingFolder,
     [Parameter()] [System.Version] $PackageVersion,
-    [Parameter()] [string] [ValidateNotNullOrEmpty()] $PackageVersionSuffix
+    [Parameter()] [string] $PackageVersionSuffix
 )
 
 Set-StrictMode -Version Latest
