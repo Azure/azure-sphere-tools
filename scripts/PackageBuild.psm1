@@ -87,12 +87,20 @@ Folder to which the build package has been written
 
 .PARAMETER feed
 Feed folder to publish the package
+
+.PARAMETER root
+Obsolete (do not use)
+
+.PARAMETER version
+Obsolete (do not use)
 #>
 function Publish-LocalPackage
 {
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
+        $root,
+        $version
     )
 
     $packages = Get-ChildItem -Filter "*.nupkg" $outputFolder
