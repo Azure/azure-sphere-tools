@@ -251,7 +251,7 @@ function Build-Sample
 function Get-PackageVersion {
     param(
         [Parameter()] [System.Version] $PackageVersion,
-        [Parameter()] [string] [ValidateNotNullOrEmpty()] $PackageVersionSuffix
+        [Parameter()] [string] $PackageVersionSuffix
     )
 
     if (-not $PackageVersion) {
