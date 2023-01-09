@@ -1,3 +1,10 @@
+<#
+.SYNOPSIS
+Build the Python device package
+
+.DESCRIPTION
+Build the Python device package
+#>
 
 $PythonRoot = Join-Path $PSScriptRoot ".." "Manufacturing" "src" "Python"
 

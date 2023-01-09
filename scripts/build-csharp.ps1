@@ -1,3 +1,20 @@
+<#
+.SYNOPSIS
+Build the NuGet device library, sample app and tests
+
+.DESCRIPTION
+Builds the NuGet device library with the given version, and publishes to a temporary local feed.
+This feed is then used to build the sample app and tests.
+
+.PARAMETER WorkingFolder
+Optional working folder for the build
+
+.PARAMETER PackageVersion
+Optional package version to use (without suffix)
+
+.PARAMETER PackageVersionSuffix
+Optional package version suffix to use
+#>
 
 [CmdletBinding()]
 param(
@@ -11,14 +28,7 @@ Import-Module -Name $(Join-Path $PSScriptRoot PackageBuild.psm1 -Resolve)
 
 Set-Location $(Join-Path $PSScriptRoot "..")
 
-if (-not $PackageVersion) {
-    $Version = "1.0.1.1234-ci"
-} else {
-    $Version = "${PackageVersion}"
-    if ($PackageVersionSuffix) {
-        $Version += "-${PackageVersionSuffix}"
-    }
-}
+$Version = Get-PackageVersion -PackageVersion $PackageVersion -PackageVersionSuffix $PackageVersionSuffix
 
 if (-not $WorkingFolder) {
     $TempFolder = [System.IO.Path]::GetTempPath()

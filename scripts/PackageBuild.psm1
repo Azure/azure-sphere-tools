@@ -1,3 +1,10 @@
+<#
+.SYNOPSIS
+Invoke a dotnet command
+
+.DESCRIPTION
+Invoke the specified dotnet command, throwing an exception if the return code is non-zero
+#>
 function Invoke-Dotnet()
 {
     if ($args.Count -eq 0) {
@@ -13,6 +20,19 @@ function Invoke-Dotnet()
     }
 }
 
+<#
+.SYNOPSIS
+Build the device library
+
+.DESCRIPTION
+Build the device library found under the specified root with the specified version
+
+.PARAMETER root
+Path under which the library source can be found at root\Nuget\Package
+
+.PARAMETER version
+Version to apply to the built library
+#>
 function Build-Library
 {
     param(
@@ -26,6 +46,22 @@ function Build-Library
     Invoke-Dotnet build -p:PackageVersion=$version --verbosity normal $package
 }
 
+<#
+.SYNOPSIS
+Build the device library package
+
+.DESCRIPTION
+Build a package from the previously build device library, and place the result in the given output folder
+
+.PARAMETER outputFolder
+Path to the location to save the finished package
+
+.PARAMETER root
+Path under which the library source can be found at root\Nuget\Package
+
+.PARAMETER version
+Version to apply to the package
+#>
 function Build-LibraryPackage
 {
     param(
@@ -39,13 +75,24 @@ function Build-LibraryPackage
     Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
 }
 
+<#
+.SYNOPSIS
+Publish the package to a local feed folder
+
+.DESCRIPTION
+Publish the specified package to a local package feed folder.
+
+.PARAMETER outputFolder
+Folder to which the build package has been written
+
+.PARAMETER feed
+Feed folder to publish the package
+#>
 function Publish-LocalPackage
 {
     param(
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed
     )
 
     $packages = Get-ChildItem -Filter "*.nupkg" $outputFolder
@@ -56,6 +103,20 @@ function Publish-LocalPackage
     copy-item $packages.FullName -Destination $Feed
 }
 
+<#
+.SYNOPSIS
+Find nuget.config files
+
+.DESCRIPTION
+For a given project or project folder, find the Nuget.config file(s) that apply to it.
+Searches up the directory hierachy from the specified project.
+
+.PARAMETER project
+Path to a project/project folder
+
+.PARAMETER firstOnly
+If set, return only the first found Nuget.config file
+#>
 function Find-NugetConfigs
 {
     param(
@@ -80,6 +141,26 @@ function Find-NugetConfigs
     $configs
 }
 
+<#
+.SYNOPSIS
+Build a project with package from the specified feed
+
+.DESCRIPTION
+For a project that uses the Microsoft.Azure.Sphere.DeviceAPI package, replace the package reference with one
+to the specified version from the local feed, and then build it.
+
+.PARAMETER project
+Path to a project to build
+
+.PARAMETER feed
+Path to a local feed folder containing the package to use
+
+.PARAMETER version
+Package version to use
+
+.PARAMETER publishLocation
+Location to publish the build project (Optional)
+#>
 function Build-WithLocalPackage
 {
     param(
@@ -159,10 +240,30 @@ function Build-Sample
     }
 }
 
+function Get-PackageVersion {
+    param(
+        [Parameter()] [System.Version] $PackageVersion,
+        [Parameter()] [string] [ValidateNotNullOrEmpty()] $PackageVersionSuffix
+    )
+
+    if (-not $PackageVersion) {
+        $Version = "0.0.0.999-ci"
+    } else {
+        $Version = "${PackageVersion}"
+        if ($PackageVersionSuffix) {
+            $Version += "-${PackageVersionSuffix}"
+        }
+    }
+
+    $Version
+}
+
+
 Export-ModuleMember `
     Build-Library, `
     Build-LibraryPackage, `
     Publish-LocalPackage, `
     Build-Tests, `
-    Build-Sample,
-    Find-NugetConfigs
+    Build-Sample, `
+    Find-NugetConfigs, `
+    Get-PackageVersion
