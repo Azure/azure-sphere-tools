@@ -97,9 +97,9 @@ Obsolete (do not use)
 function Publish-LocalPackage
 {
     param(
+        $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
-        $root,
         $version
     )
 
