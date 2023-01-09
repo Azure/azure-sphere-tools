@@ -14,7 +14,6 @@ trigger:
     include:
     - main
     - prerelease
-    - chwhitwo/manufacturing-tools
 
 extends:
   template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
