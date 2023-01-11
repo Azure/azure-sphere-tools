@@ -8,13 +8,13 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
+    ref: chwhitwo/tools-updates
 
 trigger:
   branches:
     include:
     - main
     - prerelease
-    - chwhitwo/tools-updates
 
 extends:
   template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
