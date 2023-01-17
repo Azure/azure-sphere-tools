@@ -16,8 +16,6 @@ You may also be interested in:
 | [Manufacturing/](Manufacturing/) | Manufacturing tools that can assist with the manufacturing process and the source code for Python and C# packages for Microsoft Azure Sphere Device REST APIs. |
 | [ParseDeviceLog/](ParseDeviceLog/) | Tools for parsing the `AzureSphere_DeviceLog_nnn.bin` device log file and displaying the information contained in the file in an easy-to-read format. |
 
-
-
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

@@ -60,10 +60,6 @@ The support data is a set of log files, including the device log file `AzureSphe
 
       ![alt text](./ParseDeviceLog.png)
 
-### Expected support for the code
-
-This code is not formally maintained, but we will make a best effort to respond to and address any issues you encounter.
-
 ### How to report an issue
 
 If you run into an issue with this code, please open a GitHub issue against this repo.
