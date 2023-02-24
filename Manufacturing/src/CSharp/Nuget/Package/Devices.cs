@@ -29,11 +29,6 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         {
             if (IPRegEx.IsMatch(IpAddress))
             {
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && IpAddress != "192.168.35.2")
-                {
-                    throw new ValidationError("ERROR: Cannot set active device IP address {ip_address} on Linux. Linux does not have multi-board support.");
-                }
-
                 DeviceIP = IpAddress;
             }
             else
@@ -57,21 +52,10 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         {
             // Setup using localhost instead of ip address
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 string url = "http://localhost:48938/";
                 return RestUtils.GetRequest("api/service/devices", url);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                if (NetworkInterface.GetAllNetworkInterfaces()
-                        .Where(iface => iface.Name.Equals("sl0")).Any())
-                {
-                    return $"[{{\"IpAddress\":\"{GetActiveDeviceIpAddress()}\",\"DeviceConnectionPath\":\"{string.Empty}\"}}]";
-                }
-                // No interfaces with sl0
-                Debug.WriteLine("No devices found!");
-                return "[]";
             }
 
             // Unsupported operating system
