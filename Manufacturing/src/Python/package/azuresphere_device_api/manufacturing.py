@@ -32,7 +32,7 @@ def set_device_manufacturing_state(manufacturing_state: str) -> dict:
     :raises: requests.exceptions
     :raises: AzureSphereDeviceApiException
     """
-    valid_settable_manufacturing_states = ["DeviceComplete", "Module1Complete"]
+    valid_settable_manufacturing_states = ["Unknown", "Blank", "DeviceComplete", "Module1Complete"]
 
     if manufacturing_state not in valid_settable_manufacturing_states:
         raise ValidationError(

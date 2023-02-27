@@ -23,7 +23,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         public static string SetDeviceManufacturingState(string manufacturingState)
         {
             SinceDeviceAPIVersion.ValidateDeviceApiVersion("SetDeviceManufacturingState", "3.1.0");
-            string[] validSettableManufacturingStates = new string[] { "DeviceComplete", "Module1Complete" };
+            string[] validSettableManufacturingStates = new string[] { "Unknown", "Blank", "DeviceComplete", "Module1Complete" };
 
             if (string.IsNullOrEmpty(manufacturingState) || !Array.Exists(validSettableManufacturingStates, elem => elem.Equals(manufacturingState)))
             {
