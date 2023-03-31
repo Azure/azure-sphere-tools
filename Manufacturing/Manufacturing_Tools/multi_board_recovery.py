@@ -17,8 +17,8 @@ import os
 import logging
 import sys
 
-from azuresphere import devices
-from azuresphere.exceptions import AzureSphereDeviceApiException
+from azuresphere_device_api import devices
+from azuresphere_device_api.exceptions import AzureSphereDeviceApiException
 
 
 class AzsphereCliHelper:
