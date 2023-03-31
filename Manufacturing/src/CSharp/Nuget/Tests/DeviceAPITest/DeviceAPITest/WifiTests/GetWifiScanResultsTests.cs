@@ -2,8 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.WifiTests
 {
@@ -18,20 +19,19 @@ namespace TestDeviceRestAPI.WifiTests
         [TestMethod]
         public void GetWifiScan_Get_ReturnsValidFormat()
         {
-            string valuesSchema =
-                @"{'type':'object', 'properties': {'values':{'type':'array'}}}";
-            string wifiSchema =
-                @"{'type':'object', 'properties': {'bssid':{'type':'string'}, 'freq':{'type':'integer'}, 'signal_level':{'type':'integer'}, 'ssid':{'type':'string'}, 'securityState':{'type':'string'}}}";
+            JsonSchema valuesSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"values\":{\"type\":\"array\"}}}");
+            JsonSchema wifiSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"bssid\":{\"type\":\"string\"}, \"freq\":{\"type\":\"integer\"}, \"signal_level\":{\"type\":\"integer\"}, \"ssid\":{\"type\":\"string\"}, \"securityState\":{\"type\":\"string\"}}}");
+
             string response = Wifi.GetWiFiScan();
+            JsonNode parsedObject = JsonNode.Parse(response);
 
+            Assert.IsTrue(valuesSchema.Evaluate(parsedObject).IsValid);
 
-            JObject values = JObject.Parse(response);
-
-            Assert.IsTrue(values.IsValid(JSchema.Parse(valuesSchema)));
-
-            foreach (JObject wifis in values["values"])
+            foreach (JsonObject wifis in (JsonArray)parsedObject["values"])
             {
-                Assert.IsTrue(wifis.IsValid(JSchema.Parse(wifiSchema)));
+                Assert.IsTrue(wifiSchema.Evaluate(wifis).IsValid);
             }
         }
     }

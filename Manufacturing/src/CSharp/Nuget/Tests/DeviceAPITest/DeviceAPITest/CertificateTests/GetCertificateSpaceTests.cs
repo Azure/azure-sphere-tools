@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using TestDeviceRestAPI.Helpers;
 
 namespace TestDeviceRestAPI.CertificateTests
@@ -30,11 +30,14 @@ namespace TestDeviceRestAPI.CertificateTests
         [TestMethod]
         public void GetCertificateSpace_Get_ReturnsResponseInExpectedFormat()
         {
-            string availableSpaceSchema = @"{'type':'object', 'properties': {'AvailableSpace' : {'type':'string'}}}";
             string response =
                 Certificate.GetCertificateSpace();
 
-            Assert.IsTrue(JObject.Parse(response).IsValid(JSchema.Parse(availableSpaceSchema)));
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"AvailableSpace\" : {\"type\":\"string\"}}}");
+
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
         }
 
         /// <summary>
@@ -45,16 +48,22 @@ namespace TestDeviceRestAPI.CertificateTests
         {
             string startResponse =
                 Certificate.GetCertificateSpace();
-            int startSpace = JsonConvert.DeserializeObject<Dictionary<string, int>>(
-                startResponse)["AvailableSpace"];
+            int startSpace = JsonSerializer.Deserialize<Dictionary<string, int>>(
+                startResponse, new JsonSerializerOptions
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                })["AvailableSpace"];
 
             Certificate.AddCertificate("RootID", Utilities.pathToTestRootCert,
                                        "rootca");
 
             string endResponse =
                 Certificate.GetCertificateSpace();
-            int endSpace = JsonConvert.DeserializeObject<Dictionary<string, int>>(
-                endResponse)["AvailableSpace"];
+            int endSpace = JsonSerializer.Deserialize<Dictionary<string, int>>(
+                endResponse, new JsonSerializerOptions
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                })["AvailableSpace"];
 
             Assert.IsTrue(startSpace > endSpace);
         }
@@ -70,15 +79,21 @@ namespace TestDeviceRestAPI.CertificateTests
 
             string startResponse =
                 Certificate.GetCertificateSpace();
-            int startSpace = JsonConvert.DeserializeObject<Dictionary<string, int>>(
-                startResponse)["AvailableSpace"];
+            int startSpace = JsonSerializer.Deserialize<Dictionary<string, int>>(
+                startResponse, new JsonSerializerOptions
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                })["AvailableSpace"];
 
             Certificate.RemoveCertificate("TestCert");
 
             string endResponse =
                 Certificate.GetCertificateSpace();
-            int endSpace = JsonConvert.DeserializeObject<Dictionary<string, int>>(
-                endResponse)["AvailableSpace"];
+            int endSpace = JsonSerializer.Deserialize<Dictionary<string, int>>(
+                endResponse, new JsonSerializerOptions
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                })["AvailableSpace"];
 
             Assert.IsTrue(startSpace < endSpace);
         }

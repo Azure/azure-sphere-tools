@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Management.Automation;
 
 namespace Microsoft.Azure.Sphere.DeviceAPI
 {
@@ -27,13 +28,18 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         /// <param name="IpAddress">Device IP Address used for REST API Calls</param>
         public static void SetActiveDeviceIpAddress(string IpAddress)
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && IpAddress != "192.168.35.2" && Utils.GetSdkVersion() < SemanticVersion.Parse("23.04"))
+            {
+                throw new AzureSphereException($"ERROR: Cannot set active device IP address to '{IpAddress}'. This SDK version does not support multiple devices.");
+            }
+
             if (IPRegEx.IsMatch(IpAddress))
             {
                 DeviceIP = IpAddress;
             }
             else
             {
-                throw new AzureSphereException("Cannot set active device IP address, range is 192.168.35.2-192.168.35.255");
+                throw new AzureSphereException("Cannot set active device IP address, range is 192.168.35.2-192.168.35.254");
             }
         }
 
@@ -51,11 +57,27 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         public static string GetAttachedDevices()
         {
             // Setup using localhost instead of ip address
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 string url = "http://localhost:48938/";
                 return RestUtils.GetRequest("api/service/devices", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                if (Utils.GetSdkVersion() >= SemanticVersion.Parse("23.04"))
+                {
+                    string url = "http://localhost:48938/";
+                    return RestUtils.GetRequest("api/service/devices", url);
+                }
+
+                if (NetworkInterface.GetAllNetworkInterfaces()
+                    .Where(iface => iface.Name.Equals("sl0")).Any())
+                {
+                    return $"[{{\"IpAddress\":\"{GetActiveDeviceIpAddress()}\",\"DeviceConnectionPath\":\"{string.Empty}\"}}]";
+                }
+                // No interfaces with sl0
+                Debug.WriteLine("No devices found!");
+                return "[]";
             }
 
             // Unsupported operating system

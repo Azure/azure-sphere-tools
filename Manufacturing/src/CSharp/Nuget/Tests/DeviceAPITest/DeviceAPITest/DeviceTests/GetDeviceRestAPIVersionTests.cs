@@ -2,8 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Management.Automation;
 
 namespace TestDeviceRestAPI.DeviceTests
@@ -20,12 +21,13 @@ namespace TestDeviceRestAPI.DeviceTests
         [TestMethod]
         public void GetDeviceRestAPIVersion_Get_ReturnsExpectedVersion()
         {
-            string statusSchema = @"{'type': 'object','properties': {'REST-API-Version': {'type':'string'}}}";
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"REST-API-Version\": {\"type\":\"string\"}}}");
 
             string response = Device.GetDeviceRestAPIVersion();
-            JObject jsonResponse = JObject.Parse(response);
-            Assert.IsTrue(jsonResponse.IsValid(JSchema.Parse(statusSchema)));
-            SemanticVersion.Parse(jsonResponse["REST-API-Version"].ToString());
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
+            SemanticVersion.Parse(parsedObject["REST-API-Version"].ToString());
         }
     }
 }

@@ -2,8 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.DeviceTests
 {
@@ -21,10 +22,11 @@ namespace TestDeviceRestAPI.DeviceTests
         {
             string response = Device.GetDeviceSecurityState();
 
-            string expectedResponseSchema = @"{'type': 'object','properties': {'securityState':{'type': 'string'},'deviceIdentifier':{'type': 'string'},'deviceIdentityPublicKey':{'type': 'string'}}}";
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"securityState\":{\"type\": \"string\"},\"deviceIdentifier\":{\"type\": \"string\"},\"deviceIdentityPublicKey\":{\"type\": \"string\"}}}");
 
-            JSchema parsedSchema = JSchema.Parse(expectedResponseSchema);
-            Assert.IsTrue(JObject.Parse(response).IsValid(parsedSchema));
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
         }
     }
 }

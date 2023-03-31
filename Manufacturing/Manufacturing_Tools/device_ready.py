@@ -16,8 +16,8 @@ import logging
 import os
 import sys
 
-from azuresphere_device_api import image, devices, capabilities, wifi, manufacturing
-from azuresphere_device_api.exceptions import AzureSphereDeviceApiException
+from azuresphere import image, devices, capabilities, wifi, manufacturing
+from azuresphere.exceptions import AzureSphereDeviceApiException
 
 
 class DeviceReadyChecker:

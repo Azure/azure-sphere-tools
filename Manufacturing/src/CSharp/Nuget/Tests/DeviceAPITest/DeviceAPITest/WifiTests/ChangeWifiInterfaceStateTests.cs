@@ -2,8 +2,8 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using NuGet.Versioning;
+using System.Management.Automation;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.WifiTests
 {
@@ -74,11 +74,11 @@ namespace TestDeviceRestAPI.WifiTests
             if (SemanticVersion.Parse(SinceDeviceAPIVersion.GetDeviceApiVersion()) >= SemanticVersion.Parse("4.6.0"))
             {
                 Wifi.SetWiFiInterfacePowerSavings(true);
-                JObject obj = JObject.Parse(Wifi.GetWiFiInterfaceState());
-                Assert.IsTrue(obj["powerSavingsState"].ToString() == "enabled");
+                JsonNode parsedObject = JsonNode.Parse(Wifi.GetWiFiInterfaceState());
+                Assert.IsTrue(parsedObject["powerSavingsState"].ToString() == "enabled");
                 Wifi.SetWiFiInterfacePowerSavings(false);
-                obj = JObject.Parse(Wifi.GetWiFiInterfaceState());
-                Assert.IsTrue(obj["powerSavingsState"].ToString() == "disabled");
+                parsedObject = JsonNode.Parse(Wifi.GetWiFiInterfaceState());
+                Assert.IsTrue(parsedObject["powerSavingsState"].ToString() == "disabled");
             }
             else
             {
@@ -93,11 +93,11 @@ namespace TestDeviceRestAPI.WifiTests
             if (SemanticVersion.Parse(SinceDeviceAPIVersion.GetDeviceApiVersion()) >= SemanticVersion.Parse("4.6.0"))
             {
                 Wifi.ChangeWiFiInterfaceState(false, true);
-                JObject obj = JObject.Parse(Wifi.GetWiFiInterfaceState());
-                Assert.IsTrue(obj["powerSavingsState"].ToString() == "enabled");
+                JsonNode parsedObject = JsonNode.Parse(Wifi.GetWiFiInterfaceState());
+                Assert.IsTrue(parsedObject["powerSavingsState"].ToString() == "enabled");
                 Wifi.ChangeWiFiInterfaceState(false, false);
-                obj = JObject.Parse(Wifi.GetWiFiInterfaceState());
-                Assert.IsTrue(obj["powerSavingsState"].ToString() == "disabled");
+                parsedObject = JsonNode.Parse(Wifi.GetWiFiInterfaceState());
+                Assert.IsTrue(parsedObject["powerSavingsState"].ToString() == "disabled");
             }
             else
             {

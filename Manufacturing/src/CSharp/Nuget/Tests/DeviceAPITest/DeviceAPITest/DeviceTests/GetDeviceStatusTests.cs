@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.DeviceTests
 {
@@ -20,27 +20,29 @@ namespace TestDeviceRestAPI.DeviceTests
         [TestMethod]
         public void GetDeviceStatus_Get_ReturnsCorrectFormat()
         {
-            string statusSchema = @"{'type': 'object','properties': {'uptime': {'type':'integer'}}}";
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"uptime\": {\"type\":\"integer\"}}}");
 
             string response = Device.GetDeviceStatus();
 
-            Assert.IsTrue(JObject.Parse(response).IsValid(JSchema.Parse(statusSchema)));
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
         }
 
         /// <summary>
-        /// Tests if getting the device status at later points increases the 'uptime'.
+        /// Tests if getting the device status at later points increases the \"uptime\".
         /// </summary>
         [TestMethod]
         public void GetDeviceStatus_GetThenGet_UptimeIncreasesWithLaterCalls()
         {
             string response = Device.GetDeviceStatus();
-            int startTime = JsonConvert.DeserializeObject<Dictionary<string, int>>(response)["uptime"];
+            int startTime = JsonSerializer.Deserialize<Dictionary<string, int>>(response)["uptime"];
 
             Thread.Sleep(1000);
 
             string endResponse = Device.GetDeviceStatus();
 
-            int endTime = JsonConvert.DeserializeObject<Dictionary<string, int>>(endResponse)["uptime"];
+            int endTime = JsonSerializer.Deserialize<Dictionary<string, int>>(endResponse)["uptime"];
 
             Assert.IsTrue(startTime < endTime);
         }

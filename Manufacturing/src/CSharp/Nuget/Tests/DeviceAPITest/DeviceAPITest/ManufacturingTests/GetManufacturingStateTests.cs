@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.ManufacturingTests
 {
@@ -22,14 +22,15 @@ namespace TestDeviceRestAPI.ManufacturingTests
         {
             string response = Manufacturing.GetManufacturingState();
 
-            string expectedTopLevelSchema =
-                @"{'type': 'object','properties': {'manufacturingState': {'type':'string', 'required':true}}}";
+            JsonSchema expectedTopLevelSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"manufacturingState\": {\"type\":\"string\"}}}");
 
             string[] validManufacturingStates = { "Blank", "Module1Complete", "DeviceComplete", "Unknown" };
 
-            Assert.IsTrue(JObject.Parse(response).IsValid(JSchema.Parse(expectedTopLevelSchema)));
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(expectedTopLevelSchema.Evaluate(parsedObject).IsValid);
 
-            string state = JsonConvert.DeserializeObject<Dictionary<string, string>>(response)["manufacturingState"];
+            string state = JsonSerializer.Deserialize<Dictionary<string, string>>(response)["manufacturingState"];
 
             Assert.IsTrue(validManufacturingStates.Any(validState => validState.Equals(state)));
         }

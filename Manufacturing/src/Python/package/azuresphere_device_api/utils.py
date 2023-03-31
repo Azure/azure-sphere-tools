@@ -6,14 +6,19 @@ from http import HTTPStatus
 from pathlib import Path
 from typing import Any
 from uuid import UUID
+from sys import platform
 import requests
 from requests_toolbelt.adapters import host_header_ssl
 
 from azuresphere_device_api.error_handler import handle_status_code_errors
-from azuresphere_device_api.exceptions import UnknownDeviceError, DeviceError
+from azuresphere_device_api.exceptions import UnknownDeviceError, DeviceError, AzureSphereDeviceApiException, ValidationError
 from azuresphere_device_api.validation import set_current_device_api_version
 
+from packaging import version
+import os
+
 _CURRENT_DEVICE_IP = "192.168.35.2"
+_SDK_VERSION = None
 
 CURRENT_DIR = Path(__file__).parent
 _CERT_PATH = (CURRENT_DIR / "certs/device_rest_api_certificate.pem").absolute()
@@ -58,6 +63,40 @@ def __make_request(**kwargs):
         raise UnknownDeviceError from other_exception
 
 
+def get_sdk_path() -> str:
+    sdk_path = os.environ.get("AzureSphereDefaultSDKDir")
+
+    if sdk_path == "" or sdk_path is None:
+        raise AzureSphereDeviceApiException(
+            "Cannot retrieve the SDK path, 'AzureSphereDefaultSDKDir' environment variable is not set! Is the SDK installed and available?")
+
+    return sdk_path
+
+
+def get_sdk_version() -> version.Version:
+    global _SDK_VERSION
+    if _SDK_VERSION is not None:
+        return _SDK_VERSION
+
+    sdk_version_path = os.path.join(get_sdk_path(), "VERSION")
+
+    if os.path.exists(sdk_version_path):
+        with open(sdk_version_path, "r", encoding="utf8") as version_file:
+            version_number = version_file.read().strip()
+            period_count = len(
+                [char for char in version_number if char == "."])
+            if period_count > 3:
+                chunked = version_number.split(".")
+                preview_version = chunked[-1]
+                version_number = ".".join(chunked[:3]) + f"- {preview_version}"
+
+            _SDK_VERSION = version.parse(version_number)
+            return _SDK_VERSION
+
+    raise AzureSphereDeviceApiException(
+        "Cannot retrieve the SDK version, version file does not exist! Is the SDK installed and available?")
+
+
 def set_device_ip_address(ip_address: str):
     """Sets the device IP address used in all requests.
 
@@ -65,6 +104,11 @@ def set_device_ip_address(ip_address: str):
     :type ip_address: string
     """
     global _CURRENT_DEVICE_IP
+
+    if "linux" in platform and ip_address != "192.168.35.2" and get_sdk_version() < version.parse("23.04"):
+        raise ValidationError(
+            f"ERROR: Cannot set active device IP address to '{ip_address}'. This SDK version does not support multiple devices.")
+
     _CURRENT_DEVICE_IP = ip_address
 
 
