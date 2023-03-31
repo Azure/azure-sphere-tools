@@ -348,3 +348,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Python packages
+*.egg-info
+**/dist/*.whl
+**/dist/*.tar.gz

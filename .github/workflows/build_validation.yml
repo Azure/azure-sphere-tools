@@ -1,0 +1,58 @@
+name: build
+
+on:
+  push:
+    branches: [ main, prerelease ]
+  pull_request:
+    branches: [ main, prerelease ]
+
+env:
+  DOTNET_VERSION: '6.0.401' # The .NET SDK version to use
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  build-csharp:
+
+    name: build-csharp-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: latest
+
+    - name: Run C# build
+      shell: pwsh
+      run: |
+        ./scripts/build-csharp.ps1
+
+  build-python:
+    name: build-python-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Run Python build
+      shell: pwsh
+      run: |
+        ./scripts/build-python.ps1

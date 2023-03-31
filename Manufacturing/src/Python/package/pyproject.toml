@@ -1,0 +1,49 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -vv"
+testpaths = [
+    "package_tests",
+]
+
+[project]
+name = "azuresphere-device-api"
+version = "1.0.3"
+authors = [
+    { name="Microsoft", email="azspheremfrsamplesup@microsoft.com" }
+]
+keywords = ["azure", "sphere", "device", "api"]
+readme = "README.md"
+description = "A library for interacting with Azure Sphere devices using the inbuilt REST server."
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "requests==2.26.0",
+    "requests-toolbelt >= 0.9.1"
+]
+requires-python = ">=3.8"
+
+[tool.setuptools]
+license-files = [ "LICENSE.txt" ]
+zip-safe = false
+
+[tool.setuptools.package-dir]
+azuresphere_device_api = "azuresphere_device_api"
+
+[tool.setuptools.packages.find]
+exclude = [ "*tests*" ]
+
+# include certificates
+[tool.setuptools.package-data]
+azuresphere_device_api = [ "certs/*.pem" ]
+
+

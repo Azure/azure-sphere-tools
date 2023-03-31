@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This nuget.config file is used when building as part of an ADO pipeline
+     and ensures that we use our internal nuget proxy feed for Supply Chain
+     Security. Public builds will still use nuget.org -->
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="4x4_PublicPackages" value="https://pkgs.dev.azure.com/msazuresphere/4x4/_packaging/4x4_PublicPackages/nuget/v3/index.json" />
+  </packageSources>
+</configuration>
