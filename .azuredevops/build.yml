@@ -2,19 +2,18 @@ name: $(date:yyyyMMdd)$(rev:.rr)-$(BuildID)
 
 resources:
   repositories:
-    - repository: self
-      clean: true
-    - repository: SdkBuildScripts
-      clean: true
-      ref: refs/heads/devinejames/ps-testing
-      name: SdkBuildScripts
-      type: git
+  - repository: self
+    clean: true
+  - repository: SdkBuildScripts
+    clean: true
+    name: SdkBuildScripts
+    type: git
 
 trigger:
   branches:
     include:
-      - main
-      - prerelease
+    - main
+    - prerelease
 
 extends:
   template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
