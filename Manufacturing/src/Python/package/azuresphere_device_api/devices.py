@@ -15,7 +15,7 @@ def set_active_device_ip_address(ip_address: str) -> None:
     :param ip_address: The device IP address to use.
     :type ip_address: string
     """
-    regex_pattern = '^192.168.35.\\b([2-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\b$'
+    regex_pattern = '^192.168.35.\\b([2-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])\\b$'
     pattern_matches = re.findall(regex_pattern, ip_address)
 
     if not pattern_matches:

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         /// </summary>
         private static string DeviceIP = "192.168.35.2";
 
-        private static Regex IPRegEx = new Regex("192.168.35.\\b([2-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\b");
+        private static Regex IPRegEx = new Regex("192.168.35.\\b([2-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-4])\\b");
 
         /// <summary>
         /// Set the IP address used for REST calls
