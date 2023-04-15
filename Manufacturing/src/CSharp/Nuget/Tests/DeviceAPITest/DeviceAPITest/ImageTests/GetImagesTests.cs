@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using TestDeviceRestAPI.Helpers;
 
 namespace TestDeviceRestAPI.ImageTests
@@ -26,30 +26,29 @@ namespace TestDeviceRestAPI.ImageTests
         [TestMethod]
         public void GetImages_Get_ReturnsCorrectFormat()
         {
-            string topLevelSchema =
-                @"{'type':'object', 'properties': {'is_ota_update_in_progress' : {'type':'boolean'}, 'has_staged_updates' : {'type':'boolean'}, 'restart_required' : {'type':'boolean'}, 'components' : {'type':'array'}}}";
-            string componentsSchema =
-                @"{'type':'object', 'properties': {'uid': {'type':'string'}, 'image_type': {'type':'integer'}, 'is_update_staged': {'type':'boolean'}, 'does_image_type_require_restart': {'type':'boolean'}, 'images': {'type':'array'}, 'name': {'type':'string'}}}";
-            string imagesSchema =
-                @"{'type':'object', 'properties': {'uid': {'type':'string'}, 'length_in_bytes': {'type':'integer'}, 'uncompressed_length_in_bytes': {'type':'integer'}, 'replica_type': {'type':'integer'}}}";
+            JsonSchema topLevelSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"is_ota_update_in_progress\" : {\"type\":\"boolean\"}, \"has_staged_updates\" : {\"type\":\"boolean\"}, \"restart_required\" : {\"type\":\"boolean\"}, \"components\" : {\"type\":\"array\"}}}");
+            JsonSchema componentsSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"uid\": {\"type\":\"string\"}, \"image_type\": {\"type\":\"integer\"}, \"is_update_staged\": {\"type\":\"boolean\"}, \"does_image_type_require_restart\": {\"type\":\"boolean\"}, \"images\": {\"type\":\"array\"}, \"name\": {\"type\":\"string\"}}}");
+            JsonSchema imagesSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"uid\": {\"type\":\"string\"}, \"length_in_bytes\": {\"type\":\"integer\"}, \"uncompressed_length_in_bytes\": {\"type\":\"integer\"}, \"replica_type\": {\"type\":\"integer\"}}}");
 
             string response = Image.GetImages();
 
-            Assert.IsTrue(
-                JObject.Parse(response).IsValid(JSchema.Parse(topLevelSchema)));
-            JArray components =
-                (JArray)JsonConvert.DeserializeObject<Dictionary<string, object>>(
-                    response)["components"];
+            JsonNode topLevelObject = JsonNode.Parse(response);
+            Assert.IsTrue(topLevelSchema.Evaluate(topLevelObject).IsValid);
 
-            foreach (JObject component in components)
+            JsonArray components = JsonSerializer.Deserialize<Dictionary<string, JsonNode>>(response)["components"].AsArray();
+
+            foreach (JsonObject component in components)
             {
-                Assert.IsTrue(component.IsValid(JSchema.Parse(componentsSchema)));
+                Assert.IsTrue(componentsSchema.Evaluate(component).IsValid);
 
-                JArray images = (JArray)component["images"];
+                JsonArray images = component["images"].AsArray();
 
-                foreach (JObject image in images)
+                foreach (JsonObject image in images)
                 {
-                    Assert.IsTrue(image.IsValid(JSchema.Parse(imagesSchema)));
+                    Assert.IsTrue(imagesSchema.Evaluate(image).IsValid);
                 }
             }
         }

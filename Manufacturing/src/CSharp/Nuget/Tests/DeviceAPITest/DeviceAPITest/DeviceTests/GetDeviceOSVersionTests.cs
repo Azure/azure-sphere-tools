@@ -2,8 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Management.Automation;
 
 
@@ -22,12 +23,12 @@ namespace TestDeviceRestAPI.DeviceTests
         public void GetDeviceOSVersion_Get_ReturnsExpectedVersion()
         {
             string restApiVersion = Device.GetDeviceRestAPIVersion();
-            JObject resp = JObject.Parse(restApiVersion);
+            JsonNode parsedObject = JsonNode.Parse(restApiVersion);
             Console.WriteLine(restApiVersion);
-            Console.WriteLine(resp);
-            Console.WriteLine(resp["REST-API-Version"]);
+            Console.WriteLine(parsedObject);
+            Console.WriteLine(parsedObject["REST-API-Version"]);
 
-            SemanticVersion restSemVer = SemanticVersion.Parse(resp["REST-API-Version"].ToString());
+            SemanticVersion restSemVer = SemanticVersion.Parse(parsedObject["REST-API-Version"].ToString());
             Console.WriteLine(restSemVer);
             SemanticVersion validVersion = SemanticVersion.Parse("4.5.0");
             Console.WriteLine(validVersion);
@@ -35,11 +36,13 @@ namespace TestDeviceRestAPI.DeviceTests
 
             if (restSemVer.CompareTo(validVersion) >= 0)
             {
-                string osVersionSchema = @"{'type': 'object','properties': {'osversion':{'type': 'string'}}}";
+                JsonSchema responseSchema =
+                    JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"osversion\":{\"type\": \"string\"}}}");
                 string osVersionResp = Device.GetDeviceOSVersion();
-                JObject osVersionJson = JObject.Parse(osVersionResp);
 
-                Assert.IsTrue(osVersionJson.IsValid(JSchema.Parse(osVersionSchema)));
+                JsonNode osVersionJson = JsonNode.Parse(osVersionResp);
+
+                Assert.IsTrue(responseSchema.Evaluate(osVersionJson).IsValid);
                 SemanticVersion.Parse(osVersionJson["osversion"].ToString());
             }
             else

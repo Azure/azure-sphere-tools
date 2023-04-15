@@ -2,9 +2,8 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-
+using Json.Schema;
+using System.Text.Json.Nodes;
 namespace TestDeviceRestAPI.NetworkTests
 {
     /// <summary>
@@ -19,21 +18,11 @@ namespace TestDeviceRestAPI.NetworkTests
         {
             string response = Network.GetNetworkStatus();
 
-            string schemaJson = @"{
-                'type': 'object',
-                'properties': 
-                {
-                    'deviceAuthenticationIsReady': {'type': 'boolean'},
-                    'networkTimeSync': {'type': 'string'},
-                    'proxy': {'type': 'string'},
-                }
-            }";
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\":{\"deviceAuthenticationIsReady\": {\"type\": \"boolean\"},\"networkTimeSync\": {\"type\": \"string\"},\"proxy\": {\"type\": \"string\"}}}");
 
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
-            JObject networkStatus = JObject.Parse(response);
-            bool valid = networkStatus.IsValid(schema);
-
-            Assert.IsTrue(valid);
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
         }
     }
 }

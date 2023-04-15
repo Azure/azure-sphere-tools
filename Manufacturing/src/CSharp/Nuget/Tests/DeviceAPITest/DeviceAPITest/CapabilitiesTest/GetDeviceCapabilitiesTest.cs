@@ -2,10 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 namespace TestDeviceRestAPI.ACapabilitiesTest
 {
     /// <summary>
@@ -20,15 +19,16 @@ namespace TestDeviceRestAPI.ACapabilitiesTest
         [TestMethod]
         public void GetDeviceCapabilities_Get_ReturnsExpectedFormatCapabilities()
         {
-            string responseSchema =
-                @"{'type': 'object','properties': {'device_capabilities': {'type':'array'}}}";
-
             string response = Capabilities.GetDeviceCapabilities();
 
-            Assert.IsTrue(JObject.Parse(response).IsValid(JSchema.Parse(responseSchema)));
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"device_capabilities\": {\"type\":\"array\"}}}");
+
+            JsonNode parsedObject = JsonNode.Parse(response);
+            Assert.IsTrue(responseSchema.Evaluate(parsedObject).IsValid);
 
             // Will throw exception and fail test if cannot deserialize into list of ints
-            JsonConvert.DeserializeObject<Dictionary<string, List<int>>>(response);
+            JsonSerializer.Deserialize<Dictionary<string, List<int>>>(response);
         }
     }
 }

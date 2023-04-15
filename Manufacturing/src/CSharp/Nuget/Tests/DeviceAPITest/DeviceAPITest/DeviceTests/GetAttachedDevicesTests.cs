@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.DeviceTests
 {
@@ -20,15 +20,16 @@ namespace TestDeviceRestAPI.DeviceTests
         [TestMethod]
         public void AttachedDevices_Get_ReturnsCorrectFormatDevices()
         {
-            string deviceSchema = @"{'type':'object', 'properties': {'DeviceConnectionPath':{'type':'string'}, 'IpAddress':{'type':'string'}}}";
+            JsonSchema responseSchema =
+                JsonSchema.FromText("{\"type\":\"object\", \"properties\": {\"DeviceConnectionPath\":{\"type\":\"string\"}, \"IpAddress\":{\"type\":\"string\"}}}");
 
             string response = Devices.GetAttachedDevices();
-            JArray parsedResponse = JsonConvert.DeserializeObject<JArray>(response);
-            JSchema parsedDeviceSchema = JSchema.Parse(deviceSchema);
 
-            foreach (JObject device in parsedResponse)
+            JsonArray parsedResponse = JsonSerializer.Deserialize<JsonArray>(response);
+
+            foreach (JsonNode device in parsedResponse)
             {
-                Assert.IsTrue(device.IsValid(parsedDeviceSchema));
+                Assert.IsTrue(responseSchema.Evaluate(device).IsValid);
             }
         }
     }

@@ -8,7 +8,7 @@
 		<Description>A package containing abstractions for Microsoft Azure Sphere Device REST APIs</Description>
 		<Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
 		<PackageId>Microsoft.Azure.Sphere.DeviceAPI</PackageId>
-		<Version>1.0.3</Version>
+		<Version>1.1.0</Version>
 		<PackageTags>Azure Sphere device rest api</PackageTags>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -30,6 +30,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.Management.Automation" Version="7.2.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+		<_Parameter1>DeviceAPITest</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 </Project>

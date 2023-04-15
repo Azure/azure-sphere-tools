@@ -2,9 +2,9 @@
    Licensed under the MIT License. */
 
 using Microsoft.Azure.Sphere.DeviceAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using Json.Schema;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace TestDeviceRestAPI.NetworkTests
 {
@@ -18,17 +18,15 @@ namespace TestDeviceRestAPI.NetworkTests
         [TestMethod]
         public void GetNetworkInterfaces_Get_ReturnsInterfacesInCorrectFormat()
         {
-            string interfacesSchema = @"{'type': 'object','properties': {'interfaceName': {'type':'string'}, 'interfaceUp': {'type':'boolean'},'connectedToNetwork': {'type':'boolean'},'ipAcquired': {'type':'boolean'},'connectedToInternet': {'type':'boolean'},'ipAddresses': {'type':'array'}, 'hardwareAddress': {'type':'string'}, 'ipAssignment': {'type':'string'}}, 'oneOf': [{'required': ['interfaceName', 'interfaceUp', 'connectedToNetwork', 'ipAcquired', 'connectedToInternet', 'ipAddresses']}, {'required': ['interfaceName', 'interfaceUp', 'connectedToNetwork', 'ipAcquired', 'connectedToInternet', 'hardwareAddress', 'ipAssignment']}]}";
-
-            JSchema parsedInterSchema = JSchema.Parse(interfacesSchema);
+            JsonSchema interfacesSchema = JsonSchema.FromText("{\"type\": \"object\",\"properties\": {\"interfaceName\": {\"type\":\"string\"}, \"interfaceUp\": {\"type\":\"boolean\"},\"connectedToNetwork\": {\"type\":\"boolean\"},\"ipAcquired\": {\"type\":\"boolean\"},\"connectedToInternet\": {\"type\":\"boolean\"},\"ipAddresses\": {\"type\":\"array\"}, \"hardwareAddress\": {\"type\":\"string\"}, \"ipAssignment\": {\"type\":\"string\"}}, \"oneOf\": [{\"required\": [\"interfaceName\", \"interfaceUp\", \"connectedToNetwork\", \"ipAcquired\", \"connectedToInternet\", \"ipAddresses\"]}, {\"required\": [\"interfaceName\", \"interfaceUp\", \"connectedToNetwork\", \"ipAcquired\", \"connectedToInternet\", \"hardwareAddress\", \"ipAssignment\"]}]}");
 
             Network.SetNetworkInterfaces("wlan0", true);
             string response =
                 Network.GetAllNetworkInterfaces();
 
-            foreach (JObject inter in JsonConvert.DeserializeObject<JObject>(response)["interfaces"])
+            foreach (JsonObject inter in (JsonArray)JsonNode.Parse(response).AsObject()["interfaces"])
             {
-                Assert.IsTrue(inter.IsValid(parsedInterSchema));
+                Assert.IsTrue(interfacesSchema.Evaluate(inter).IsValid);
             }
         }
     }

@@ -13,13 +13,12 @@
 		<PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
 		<PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
 		<PackageReference Include="coverlet.collector" Version="3.1.2" />
-		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
-		<PackageReference Include="NuGet.Versioning" Version="6.3.1" />
+		<PackageReference Include="JsonSchema.Net" Version="4.0.1" />
 		<PackageReference Include="System.Management.Automation" Version="7.2.5" />
 	</ItemGroup>
 
 	<ItemGroup>
-	
+
 		<Content Include="Helpers\Certificates\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
