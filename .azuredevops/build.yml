@@ -6,7 +6,7 @@ resources:
     clean: true
   - repository: SdkBuildScripts
     clean: true
-    ref: refs/heads/devinejames/cfs-dotnet-bug
+    ref: refs/heads/devinejames/dotnet-bug-round2
     name: SdkBuildScripts
     type: git
 
