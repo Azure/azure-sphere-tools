@@ -13,9 +13,11 @@ def set_current_device_api_version(device_api_version: str) -> None:
     :param: device_api_version the new DeviceAPI to use when validating compatibility.
     :returns: None
     @note This is an internal function that should not be used except by this library.
+    blah blah
     """
     global _CURRENT_DEVICE_API_VERSION
     _CURRENT_DEVICE_API_VERSION = device_api_version
+
 
 def get_current_device_api_version() -> str:
     """
@@ -28,11 +30,13 @@ def get_current_device_api_version() -> str:
 
     return _CURRENT_DEVICE_API_VERSION
 
+
 def validate_device_api_version(function_name: str, since_version: str):
     current_version = get_current_device_api_version()
     if version.parse(since_version) > version.parse(current_version):
         raise DeviceError(
             f" The current device does not support {function_name}. Required DeviceAPI version: {since_version}. DeviceAPI version reported by device: {current_version} ")
+
 
 def since_device_api_version(since_version: str):
     """

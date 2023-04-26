@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
     {
         /// <summary>Makes a REST "GET" request to retrieve a list of images on an attached device.</summary>
         /// <returns>All images running on the device as a string on success. An exception will be thrown on error.</returns>
+        // ignore me
         public static string GetImages()
         {
             return RestUtils.GetRequest("images");
