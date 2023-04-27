@@ -10,9 +10,6 @@ resources:
     name: SdkBuildScripts
     type: git
 
-variables:
-  - Codeql.Enabled: true
-
 trigger:
   branches:
     include:
