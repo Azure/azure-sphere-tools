@@ -6,9 +6,12 @@ resources:
     clean: true
   - repository: SdkBuildScripts
     clean: true
-    ref: refs/heads/devinejames/dotnet-bug-round2
+    ref: refs/heads/devinejames/dotnet-codeql-round3
     name: SdkBuildScripts
     type: git
+
+variables:
+  - Codeql.Enabled: true
 
 trigger:
   branches:
