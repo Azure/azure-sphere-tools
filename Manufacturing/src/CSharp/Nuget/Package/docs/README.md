@@ -50,3 +50,8 @@ The [DeviceApiSample](https://github.com/Azure/azure-sphere-tools/tree/main/Manu
 ## API documentation
 
 View the package API documentation [on Github](https://github.com/Azure/azure-sphere-tools/blob/main/Manufacturing/src/README.md).
+
+## Supported host operating systems
+
+- Windows 10 and 11
+- Ubuntu 18.04, 20.04, 22.04

@@ -37,4 +37,4 @@ Microsoft Azure Sphere Device REST APIs for Python documentation is available at
 ## Supported host operating systems
 
 - Windows 10 and 11
-- Ubuntu 18.04 and 20.04
+- Ubuntu 18.04, 20.04, 22.04
