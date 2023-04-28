@@ -14,7 +14,7 @@ testpaths = [
 
 [project]
 name = "azuresphere-device-api"
-version = "1.1.0"
+version = "1.1.1"
 authors = [
     { name="Microsoft", email="azspheremfrsamplesup@microsoft.com" }
 ]

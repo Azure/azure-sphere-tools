@@ -36,7 +36,17 @@ internal class Program
 
 1. Follow the guide to [add a nuget package to a Visual Studio project](https://learn.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio).
 
+## Usage
+
+Before using Microsoft Azure Sphere Device REST APIs for CSharp, you must install the Azure Sphere SDK.
+
+- To install the Azure Sphere SDK on Windows, follow the [Windows Quickstart](https://learn.microsoft.com/azure-sphere/install/install-sdk?pivots=cli).
+- To install the Azure Sphere SDK on Linux, follow the [Linux Quickstart](https://learn.microsoft.com/azure-sphere/install/install-sdk-linux?pivots=cli-linux).
+
+### Sample
+
+The [DeviceApiSample](https://github.com/Azure/azure-sphere-tools/tree/main/Manufacturing/src/CSharp/DeviceAPISample) gets the list of attached devices, displays the device IP address, and device ID.
 
 ## API documentation
 
-View the package API documentation [on Github](https://github.com/Azure/azure-sphere-samples/blob/main/Manufacturing/src/README.md).
+View the package API documentation [on Github](https://github.com/Azure/azure-sphere-tools/blob/main/Manufacturing/src/README.md).
