@@ -171,12 +171,14 @@ def get_request(api: str, api_type=AzureSphereDeviceApiRequestType.DEVICE_URL) -
         return get_response_code_content(requests.get(
             url_to_use,
             verify=str(_CERT_PATH),
+            allow_redirects=False,
             headers=header), api_type)
 
     return get_response_code_content(__make_request(
         method="GET",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
     ), api_type)
 
@@ -196,6 +198,7 @@ def delete_request(api: str) -> dict:
         method="DELETE",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
     ))
 
@@ -215,6 +218,7 @@ def post_request_no_body(api: str) -> dict:
         method="POST",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
     ))
 
@@ -236,6 +240,7 @@ def post_request(api: str, body: Any) -> dict:
         method="POST",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
         json=body
     ))
@@ -259,6 +264,7 @@ def patch_request(api: str, body: Any) -> dict:
         method="PATCH",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
         json=body
     ))
@@ -283,6 +289,7 @@ def put_request(api: str, body: Any) -> dict:
         method="PUT",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=__device_rest_api_headers(),
         json=body
     ))
@@ -310,6 +317,7 @@ def put_request_octet_stream(api: str, body: Any) -> dict:
         method="PUT",
         url=_create_url(api),
         verify=str(_CERT_PATH),
+        allow_redirects=False,
         headers=devicerestapi_headers,
         data=body
     ))
