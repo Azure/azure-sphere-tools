@@ -34,7 +34,7 @@ internal class Program
 
 1. Install Visual Studio
 
-1. Follow the guide to [add a nuget package to a Visual Studio project](https://learn.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio). 
+1. Follow the guide to [add a nuget package to a Visual Studio project](https://learn.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio).
 
 ## Usage
 
