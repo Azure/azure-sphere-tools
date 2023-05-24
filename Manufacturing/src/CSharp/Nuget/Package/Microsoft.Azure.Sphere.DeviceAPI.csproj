@@ -8,13 +8,13 @@
 		<Description>A package containing abstractions for Microsoft Azure Sphere Device REST APIs</Description>
 		<Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
 		<PackageId>Microsoft.Azure.Sphere.DeviceAPI</PackageId>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<PackageTags>Azure Sphere device rest api</PackageTags>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<Nullable>disable</Nullable>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/Azure/azure-sphere-samples</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/Azure/azure-sphere-tools</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
