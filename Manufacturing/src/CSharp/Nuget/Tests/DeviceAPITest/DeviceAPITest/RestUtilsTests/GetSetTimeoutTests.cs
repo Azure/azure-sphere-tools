@@ -17,10 +17,8 @@ namespace TestDeviceRestAPI.UtilsTests
         [TestMethod]
         public void GetTimeoutMatchesSet()
         {
-            UInt32 timeout = RestUtils.SetRequestTimeout(1000);
-            UInt32 gettimeout = RestUtils.GetRequestTimeout();
-
-            Assert.AreEqual(timeout, gettimeout);
+            uint timeout = RestUtils.GetRequestTimeout();
+            Assert.AreEqual(1000, timeout);
         }
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace TestDeviceRestAPI.UtilsTests
         [TestMethod]
         public void GetSetTimeoutIsApplied()
         {
-            UInt32 timeout = RestUtils.SetRequestTimeout(0);
+            RestUtils.SetRequestTimeout(0);
             Assert.ThrowsException<AzureSphereException>(() => Device.GetDeviceStatus());
         }
     }
