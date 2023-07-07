@@ -24,7 +24,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
     /// </summary>
     public static class RestUtils
     {
-        private static UInt32 DefaultTimeoutMs = 15000;
+        private static uint DefaultTimeoutMs = 15000;
 
         // Read an embedded resource, return byte array or new byte[0] if the resource isn't found
         static byte[] GetEmbeddedResource(string name)
@@ -283,7 +283,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         /// </summary>
         /// <param name="timeoutMs">The timeout in milliseconds.</param>
         /// <returns>void</returns>
-        public static void SetRequestTimeout(UInt32 timeoutMs)
+        public static void SetRequestTimeout(uint timeoutMs)
         {
             DefaultTimeoutMs = timeoutMs;
         }
@@ -292,7 +292,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
         /// Retrieves the default timeout for all requests.
         /// </summary>
         /// <returns>The current request timeout in milliseconds</returns>
-        public static UInt32 GetRequestTimeout(UInt32 timeoutMs)
+        public static uint GetRequestTimeout()
         {
             return DefaultTimeoutMs;
         }
