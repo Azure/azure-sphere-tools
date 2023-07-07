@@ -91,7 +91,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
             };
 
             HttpClient httpClient = new(httpClientHandler) { BaseAddress = new Uri(url) };
-            httpClient.Timeout = TimeSpan.FromMilliseconds(DefaultTimeout);
+            httpClient.Timeout = TimeSpan.FromMilliseconds(DefaultTimeoutMs);
             return httpClient;
         }
 
