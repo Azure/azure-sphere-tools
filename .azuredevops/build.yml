@@ -8,7 +8,6 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
-    ref: chwhitwo/tools-dotnet-8
 
 trigger:
   branches:
