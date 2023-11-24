@@ -302,7 +302,6 @@ function Get-PackageVersion {
     $Version
 }
 
-
 Export-ModuleMember `
     Build-Library, `
     Build-LibraryPackage, `
