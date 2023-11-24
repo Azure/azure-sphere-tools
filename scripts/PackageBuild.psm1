@@ -7,11 +7,20 @@ Invoke the specified dotnet command, throwing an exception if the return code is
 #>
 function Invoke-Dotnet()
 {
+    param(
+        [Parameter()] [switch] $release
+    )
+
     if ($args.Count -eq 0) {
         throw "Must supply args to dotnet command"
     }
 
-    & dotnet $args
+    $config = "Debug"
+    if ($release) {
+        $config = "Release"
+    }
+
+    & dotnet /c $config $args
 
     $result = $LASTEXITCODE
 
