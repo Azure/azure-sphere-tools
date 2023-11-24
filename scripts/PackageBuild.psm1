@@ -22,6 +22,29 @@ function Invoke-Dotnet()
 
 <#
 .SYNOPSIS
+Get the configuration switch for a dotnet command
+
+.DESCRIPTION
+Get the configuration switch for a dotnet command
+
+.PARAMETER release
+Set to use Release config instead of Debug
+#>
+function Get-ConfigParam()
+{
+    param(
+        [Parameter()] [switch] $release
+    )
+
+    if ($release) {
+        return "-c:Release"
+    } else {
+        return "-c:Debug"
+    }
+}
+
+<#
+.SYNOPSIS
 Build the device library
 
 .DESCRIPTION
@@ -32,18 +55,25 @@ Path under which the library source can be found at root\Nuget\Package
 
 .PARAMETER version
 Version to apply to the built library
+
+.PARAMETER release
+Set to use Release config instead of Debug
 #>
 function Build-Library
 {
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
+        [Parameter()] [switch] $release
     )
 
+    $buildConfig = Get-ConfigParam -release:$release
+
     $package = Join-Path $root "Nuget" "Package"
+
     Write-Output "Building project at: ${package}"
-    Invoke-Dotnet restore -v n -f $package 
-    Invoke-Dotnet build -p:PackageVersion=$version --verbosity normal $package
+    Invoke-Dotnet restore -v n -f $package
+    Invoke-Dotnet build $buildConfig -p:PackageVersion=$version --verbosity normal $package
 }
 
 <#
@@ -61,18 +91,23 @@ Path under which the library source can be found at root\Nuget\Package
 
 .PARAMETER version
 Version to apply to the package
+
+.PARAMETER release
+Set to use Release config instead of Debug
 #>
 function Build-LibraryPackage
 {
     param(
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $outputFolder,
-        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version
+        [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
+        [Parameter()] [switch] $release
     )
 
+    $buildConfig = Get-ConfigParam -release:$release
     $package = Join-Path $root "Nuget" "Package"
     Write-Output "Packaging project at: ${package}"
-    Invoke-Dotnet pack -o $outputFolder -p:PackageVersion=$version $package
+    Invoke-Dotnet pack $buildConfig -o $outputFolder -p:PackageVersion=$version $package
 }
 
 <#
@@ -87,12 +122,6 @@ Folder to which the build package has been written
 
 .PARAMETER feed
 Feed folder to publish the package
-
-.PARAMETER root
-Obsolete (do not use)
-
-.PARAMETER version
-Obsolete (do not use)
 #>
 function Publish-LocalPackage
 {
@@ -168,6 +197,9 @@ Package version to use
 
 .PARAMETER publishLocation
 Location to publish the build project (Optional)
+
+.PARAMETER release
+Set to use Release config instead of Debug
 #>
 function Build-WithLocalPackage
 {
@@ -175,9 +207,11 @@ function Build-WithLocalPackage
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $project,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
-        [Parameter()] [string] $publishLocation
+        [Parameter()] [string] $publishLocation,
+        [Parameter()] [switch] $release
     )
 
+    $buildConfig = Get-ConfigParam -release:$release
     $config = Find-NugetConfigs $project -firstOnly
 
     if (-not $config) {
@@ -199,11 +233,11 @@ function Build-WithLocalPackage
     Write-Output "Using packages:"
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
-    Invoke-Dotnet build $project --verbosity normal
+    Invoke-Dotnet build $buildConfig $project --verbosity normal
 
     Write-Output "Publishing to $publishLocation"
     if ($publishLocation) {
-        Invoke-Dotnet publish $project --verbosity normal --output $publishLocation
+        Invoke-Dotnet publish $buildConfig $project --verbosity normal --output $publishLocation
     }
 
     Write-Output "Removing local feed"
@@ -220,14 +254,15 @@ function Build-Tests
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
-        [Parameter()] [string] $publishLocation
+        [Parameter()] [string] $publishLocation,
+        [Parameter()] [switch] $release
     )
 
     $testProject = Join-Path $root Nuget Tests DeviceAPITest DeviceAPITest DeviceAPITest.csproj
     if ($publishLocation) {
-        Build-WithLocalPackage $testProject $feed $version $(Join-Path $publishLocation tests)
+        Build-WithLocalPackage $testProject $feed $version $(Join-Path $publishLocation tests) -release:$release
     } else {
-        Build-WithLocalPackage $testProject $feed $version
+        Build-WithLocalPackage $testProject $feed $version -release:$release
     }
 }
 
@@ -237,14 +272,15 @@ function Build-Sample
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $root,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $feed,
         [Parameter(Mandatory=$true)] [ValidateNotNullOrEmpty()] [string] $version,
-        [Parameter()] [string] $publishLocation
+        [Parameter()] [string] $publishLocation,
+        [Parameter()] [switch] $release
     )
 
     $sample = Join-Path $root DeviceAPISample DeviceAPISample.csproj
     if ($publishLocation) {
-        Build-WithLocalPackage $sample $feed $version $(Join-Path $publishLocation sample)
+        Build-WithLocalPackage $sample $feed $version $(Join-Path $publishLocation sample) -release:$release
     } else {
-        Build-WithLocalPackage $sample $feed $version
+        Build-WithLocalPackage $sample $feed $version -release:$release
     }
 }
 
@@ -265,7 +301,6 @@ function Get-PackageVersion {
 
     $Version
 }
-
 
 Export-ModuleMember `
     Build-Library, `
