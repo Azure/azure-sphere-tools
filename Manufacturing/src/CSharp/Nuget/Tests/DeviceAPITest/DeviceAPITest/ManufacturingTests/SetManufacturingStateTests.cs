@@ -51,9 +51,13 @@ namespace TestDeviceRestAPI.ManufacturingTests
             string startGetResponse = Manufacturing.GetManufacturingState();
             string currentState = JsonConvert.DeserializeObject<Dictionary<string, string>>(startGetResponse)["manufacturingState"];
 
-            string setResponse = Manufacturing.SetDeviceManufacturingState(currentState);
-
-            Assert.AreEqual("{}", setResponse);
+            if (currentState == "Blank") {
+                // It is invalid to try and set a device to manufacturing state "Blank", so we expect an error in this case
+                DeviceError error = Assert.ThrowsException<DeviceError>( () => Manufacturing.SetDeviceManufacturingState(currentState));
+            } else {
+                string setResponse = Manufacturing.SetDeviceManufacturingState(currentState);
+                Assert.AreEqual("{}", setResponse);
+            }
 
             string endGetResponse = Manufacturing.GetManufacturingState();
 
