@@ -15,5 +15,13 @@ trigger:
     - main
     - prerelease
 
+schedules:
+- cron: 0 4 * * * # Daily at 4am GMT
+  displayName: "Daily main"
+  branches:
+    include:
+    - main
+  always: true
+
 extends:
   template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
