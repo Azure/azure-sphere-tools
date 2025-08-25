@@ -8,6 +8,7 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
+    ref: refs/heads/devinejames/do-not-use-tempdir
 
 trigger:
   branches:
