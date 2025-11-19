@@ -49,7 +49,7 @@ variables:
     ) ]
 
 extends:
-  ${{ if eq(variables['Official'], false) }}: # REVERT AFTER TESTING
+  ${{ if eq(variables['Official'], true) }}: 
     template: /v2/OneBranch.Official.CrossPlat.yml@oneBranchPipelines
   ${{ else }}:
     template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
