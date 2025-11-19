@@ -8,7 +8,7 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
-    ref: refs/heads/dev/snehara/consolidate-yml
+    ref: refs/heads/dev/snehara/replace-scripts
 
 trigger:
   branches:
