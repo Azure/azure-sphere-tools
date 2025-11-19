@@ -9,6 +9,10 @@ resources:
     name: SdkBuildScripts
     type: git
     ref: refs/heads/dev/snehara/replace-scripts
+  - repository: oneBranchPipelines
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
 
 trigger:
   branches:
@@ -24,5 +28,19 @@ schedules:
     - main
   always: true
 
+variables:
+  Official: $[
+    or(
+    eq( variables['Build.SourceBranch'], 'refs/heads/main'),
+    startswith(variables['Build.SourceBranch'], 'refs/heads/release'),
+    startswith(variables['Build.SourceBranch'], 'refs/heads/prerelease')
+    ) ]
+
 extends:
-  template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
+  ${{ if eq(variables['Official'], true) }}: 
+    template: /v2/OneBranch.Official.CrossPlat.yml@oneBranchPipelines
+  ${{ else }}:
+    template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
+  parameters:
+    stages:
+    - template: builds/azure-sphere-tools/stages/azure-sphere-tools-build.yml@SdkBuildScripts
