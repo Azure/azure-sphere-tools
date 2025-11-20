@@ -46,6 +46,9 @@ variables:
 extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
   parameters:
+    featureFlags:
+      WindowsHostVersion:
+          Network: KS1
     stages:
     - stage: sanity_stage
       jobs:
