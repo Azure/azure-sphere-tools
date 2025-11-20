@@ -41,6 +41,7 @@ variables:
     eq( variables['Build.SourceBranch'], 'refs/heads/main'),
     startswith(variables['Build.SourceBranch'], 'refs/heads/release')
     ) ]
+  WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
 
 extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
@@ -49,6 +50,10 @@ extends:
     - stage: sanity_stage
       jobs:
         - job: sanity_check
+          pool:
+            type: windows
+          workspace:
+            clean: all
           steps:
           - task: PowerShell@2
             inputs:
