@@ -54,6 +54,9 @@ extends:
             type: windows
           workspace:
             clean: all
+          variables:
+          - name: ob_outputDirectory
+            value: "$(build.ArtifactStagingDirectory)/azure-sphere-tools"
           steps:
           - task: PowerShell@2
             inputs:
