@@ -46,7 +46,8 @@ extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
   parameters:
     stages:
-       jobs:
+    - stage: sanity_stage
+      jobs:
         - job: sanity_check
           steps:
           - task: PowerShell@2
