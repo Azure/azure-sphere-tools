@@ -46,4 +46,12 @@ extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
   parameters:
     stages:
-    - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
+       jobs:
+        - job: sanity_check
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: "inline"
+              script: |
+                Write-Output "Hello, World!"
+    # - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
