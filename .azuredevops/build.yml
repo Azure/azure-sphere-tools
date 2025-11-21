@@ -50,20 +50,4 @@ extends:
       WindowsHostVersion:
           Network: KS1
     stages:
-    - stage: sanity_stage
-      jobs:
-        - job: sanity_check
-          pool:
-            type: windows
-          workspace:
-            clean: all
-          variables:
-          - name: ob_outputDirectory
-            value: "$(build.ArtifactStagingDirectory)/azure-sphere-tools"
-          steps:
-          - task: PowerShell@2
-            inputs:
-              targetType: "inline"
-              script: |
-                Write-Output "Hello, World!"
-    # - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
+    - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
