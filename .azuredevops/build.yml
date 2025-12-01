@@ -36,11 +36,11 @@ variables:
   # nuget.config files in place and then manually run `task: nuget-security-analysis@0`
   skipNugetSecurityAnalysis: true
   system.debug: true
-  # ReleaseOrMain: $[
-  #   or(
-  #   eq( variables['Build.SourceBranch'], 'refs/heads/main'),
-  #   startswith(variables['Build.SourceBranch'], 'refs/heads/release')
-  #   ) ]
+  ReleaseOrMain: $[
+    or(
+    eq( variables['Build.SourceBranch'], 'refs/heads/main'),
+    startswith(variables['Build.SourceBranch'], 'refs/heads/release')
+    ) ]
   WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
 
 extends:
@@ -50,21 +50,20 @@ extends:
       WindowsHostVersion:
           Network: KS1
     stages:
-    - stage: hello_world_1
-      displayName: Hello World 1
+    - stage: sanity_stage
       jobs:
-      - job: print_hello
-        variables:
-        - name: ob_outputDirectory
-          value: "$(build.ArtifactStagingDirectory)/hello_world"
-        displayName: "Print Hello World"
-
-        steps:
-        - task: PowerShell@2
-          displayName: "Hello World"
-          inputs:
-            targetType: inline
-            script: |
-              Write-Output "Hello World"
-
+        - job: sanity_check
+          pool:
+            type: windows
+          workspace:
+            clean: all
+          variables:
+          - name: ob_outputDirectory
+            value: "$(build.ArtifactStagingDirectory)/azure-sphere-tools"
+          steps:
+          - task: PowerShell@2
+            inputs:
+              targetType: "inline"
+              script: |
+                Write-Output "Hello, World!"
     # - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
