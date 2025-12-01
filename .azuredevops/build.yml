@@ -67,4 +67,4 @@ extends:
             script: |
               Write-Output "Hello World"
 
-    - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
+    # - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
