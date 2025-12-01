@@ -53,18 +53,18 @@ extends:
     - stage: hello_world_1
       displayName: Hello World 1
       jobs:
-      - job: print_hello
-        variables:
-        - name: ob_outputDirectory
-          value: "$(build.ArtifactStagingDirectory)/hello_world"
-        displayName: "Print Hello World"
+        - job: print_hello
+          variables:
+          - name: ob_outputDirectory
+            value: "$(build.ArtifactStagingDirectory)/hello_world"
+          displayName: "Print Hello World"
 
-        steps:
-        - task: PowerShell@2
-          displayName: "Hello World"
-          inputs:
-            targetType: inline
-            script: |
-              Write-Output "Hello World"
+          steps:
+          - task: PowerShell@2
+            displayName: "Hello World"
+            inputs:
+              targetType: inline
+              script: |
+                Write-Output "Hello World"
 
     # - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
