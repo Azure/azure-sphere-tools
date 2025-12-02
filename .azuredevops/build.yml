@@ -41,13 +41,14 @@ variables:
     eq( variables['Build.SourceBranch'], 'refs/heads/main'),
     startswith(variables['Build.SourceBranch'], 'refs/heads/release')
     ) ]
-  WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+  WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
 
 extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
   parameters:
     featureFlags:
       WindowsHostVersion:
-          Network: KS1
+        Version: 2022
+        Network: KS1
     stages:
     - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
