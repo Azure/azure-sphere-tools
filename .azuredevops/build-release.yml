@@ -2,8 +2,6 @@ name: $(date:yyyyMMdd)$(rev:.rr)-$(BuildID)
 
 resources:
   repositories:
-  - repository: self
-    clean: true
   - repository: SdkBuildScripts
     clean: true
     name: SdkBuildScripts
@@ -13,7 +11,11 @@ resources:
     type: git
     name: OneBranch.Pipelines/GovernedTemplates
     ref: refs/heads/main
-
+  - repository: azure-sphere-tools
+    clean: true
+    type: github
+    name: Azure/azure-sphere-tools
+    endpoint: 4x4
 trigger:
   branches:
     include:
