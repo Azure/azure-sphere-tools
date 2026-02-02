@@ -45,11 +45,11 @@ variables:
   WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
 
 extends:
-  template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
+  template: /v2/OneBranch.Official.CrossPlat.yml@oneBranchPipelines
   parameters:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
         Network: KS1
     stages:
-    - template: builds/azure-sphere-tools/templates/azure-sphere-tools.yml@SdkBuildScripts
+    - template: builds/azure-sphere-tools/templates/azure-sphere-tools-release.yml@SdkBuildScripts
