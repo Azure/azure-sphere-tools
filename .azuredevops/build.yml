@@ -8,7 +8,7 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
-    ref: refs/heads/dev/snehara/replace-scripts
+    ref: refs/heads/main
   - repository: oneBranchPipelines
     type: git
     name: OneBranch.Pipelines/GovernedTemplates
