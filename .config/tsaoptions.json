@@ -1,0 +1,10 @@
+{
+    "instanceUrl": "https://dev.azure.com/msazuresphere",
+    "projectName": "4x4",
+    "areaPath": "4x4\\Gen1\\Tooling",
+    "template": "VSTS_AZSphere",
+    "notificationAliases": [
+        "asphere-sdk-accel@microsoft.com"
+    ],
+    "codebaseName": "azure-sphere-tools"
+}

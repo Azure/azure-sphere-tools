@@ -1,0 +1,55 @@
+name: $(date:yyyyMMdd)$(rev:.rr)-$(BuildID)
+
+resources:
+  repositories:
+  - repository: SdkBuildScripts
+    clean: true
+    name: SdkBuildScripts
+    type: git
+    ref: refs/heads/main
+  - repository: oneBranchPipelines
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
+  - repository: azure-sphere-tools
+    clean: true
+    type: github
+    name: Azure/azure-sphere-tools
+    endpoint: 4x4
+trigger:
+  branches:
+    include:
+    - main
+
+schedules:
+- cron: 0 4 * * * # Daily at 4am GMT
+  displayName: "Daily main"
+  branches:
+    include:
+    - main
+  always: true
+
+variables:
+  Codeql.Enabled: true
+  PythonVersion: '3.x'
+  DotNetVersion: '6.0.x'
+  # Disable automatic Nuget Security Analysis injection so we can place the
+  # nuget.config files in place and then manually run `task: nuget-security-analysis@0`
+  skipNugetSecurityAnalysis: true
+  system.debug: true
+  ReleaseOrMain: $[
+    or(
+    eq( variables['Build.SourceBranch'], 'refs/heads/main'),
+    startswith(variables['Build.SourceBranch'], 'refs/heads/release')
+    ) ]
+  WindowsContainerImage: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+
+extends:
+  template: /v2/OneBranch.Official.CrossPlat.yml@oneBranchPipelines
+  parameters:
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: KS1
+    stages:
+    - template: builds/azure-sphere-tools/templates/azure-sphere-tools-release.yml@SdkBuildScripts
