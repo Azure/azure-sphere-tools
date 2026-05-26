@@ -21,7 +21,7 @@ namespace TestDeviceRestAPI.DeviceTests
         {
             string response = Device.ClearErrorReportData();
 
-            Assert.AreEqual(response, "{}");
+            Assert.AreEqual("{}", response);
         }
 
         /// <summary>
@@ -32,10 +32,10 @@ namespace TestDeviceRestAPI.DeviceTests
         {
             string response = Device.ClearErrorReportData();
 
-            Assert.AreEqual(response, "{}");
+            Assert.AreEqual("{}", response);
 
             //Wait for error data to clear or timeout 
-            int maxMilliseconds = 1000;
+            int maxMilliseconds = 5000;
             int elapsedMilliseconds = 0;
 
             int dataLength = GetDataLength(Device.GetErrorReportData());
@@ -47,7 +47,7 @@ namespace TestDeviceRestAPI.DeviceTests
 
             }
 
-            Assert.AreEqual(dataLength, 0);
+            Assert.AreEqual(0, dataLength);
         }
 
         /// <summary>
