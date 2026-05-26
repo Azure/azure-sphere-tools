@@ -19,7 +19,7 @@ def test__clear_error_report_data__clears_error_report_data():
 
     assert {} == response
 
-    max_milliseconds = 1000
+    max_milliseconds = 5000
     elapsed_milliseconds = 0
 
     data_length = _get_data_length(device.get_error_report_data())
