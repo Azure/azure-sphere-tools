@@ -16,6 +16,7 @@ resources:
     type: github
     name: Azure/azure-sphere-tools
     endpoint: 4x4
+    ref: refs/heads/copilot/onboard-azure-sphere-tools # TODO: Temporary - revert to refs/heads/main after merge
 trigger:
   branches:
     include:
