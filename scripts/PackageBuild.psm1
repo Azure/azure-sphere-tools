@@ -237,7 +237,7 @@ function Build-WithLocalPackage
 
     Write-Output "Publishing to $publishLocation"
     if ($publishLocation) {
-        Invoke-Dotnet publish $buildConfig $project --no-incremental --force --no-restore --verbosity normal --output $publishLocation
+        Invoke-Dotnet publish $buildConfig $project --force --no-restore --verbosity normal --output $publishLocation
     }
 
     Write-Output "Removing local feed"
