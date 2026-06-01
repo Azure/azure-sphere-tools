@@ -39,6 +39,7 @@ namespace TestDeviceRestAPI.DeviceTests
             int elapsedMilliseconds = 0;
 
             int dataLength = GetDataLength(Device.GetErrorReportData());
+            Console.WriteLine($"[GLENYS] Initial dataLength after clear={dataLength}");
             while (dataLength != 0 && elapsedMilliseconds < maxMilliseconds)
             {
                 Thread.Sleep(100);
@@ -47,7 +48,12 @@ namespace TestDeviceRestAPI.DeviceTests
 
             }
 
-            Console.WriteLine($"[GLENYS] Using UPDATED DLL - dataLength={dataLength}, maxMilliseconds={maxMilliseconds}, elapsed={elapsedMilliseconds}");
+            // Debug: log the raw response to understand what the device returns
+            string rawResponse = Device.GetErrorReportData();
+            byte[] rawBytes = Encoding.ASCII.GetBytes(rawResponse);
+            Console.WriteLine($"[GLENYS] dataLength={dataLength}, maxMilliseconds={maxMilliseconds}, elapsed={elapsedMilliseconds}");
+            Console.WriteLine($"[GLENYS] Raw response length={rawBytes.Length}, first bytes=[{string.Join(",", rawBytes.Take(10))}]");
+            Console.WriteLine($"[GLENYS] Full response (hex)={BitConverter.ToString(rawBytes.Take(20).ToArray())}");
             Assert.AreEqual(0, dataLength);
         }
 
