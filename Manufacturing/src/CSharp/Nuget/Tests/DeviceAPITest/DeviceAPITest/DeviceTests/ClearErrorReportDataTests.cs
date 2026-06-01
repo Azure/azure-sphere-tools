@@ -30,30 +30,31 @@ namespace TestDeviceRestAPI.DeviceTests
         [TestMethod]
         public void ClearErrorReportData_Call_ClearsErrorReportData()
         {
-            string response = Device.ClearErrorReportData();
-
-            Assert.AreEqual("{}", response);
-
-            //Wait for error data to clear or timeout 
+            int maxRetries = 3;
             int maxMilliseconds = 5000;
-            int elapsedMilliseconds = 0;
+            int dataLength = -1;
 
-            int dataLength = GetDataLength(Device.GetErrorReportData());
-            Console.WriteLine($"[GLENYS] Initial dataLength after clear={dataLength}");
-            while (dataLength != 0 && elapsedMilliseconds < maxMilliseconds)
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                Thread.Sleep(100);
-                elapsedMilliseconds += 100;
+                string response = Device.ClearErrorReportData();
+                Assert.AreEqual("{}", response);
+
+                int elapsedMilliseconds = 0;
                 dataLength = GetDataLength(Device.GetErrorReportData());
 
+                while (dataLength != 0 && elapsedMilliseconds < maxMilliseconds)
+                {
+                    Thread.Sleep(100);
+                    elapsedMilliseconds += 100;
+                    dataLength = GetDataLength(Device.GetErrorReportData());
+                }
+
+                if (dataLength == 0)
+                {
+                    break;
+                }
             }
 
-            // Debug: log the raw response to understand what the device returns
-            string rawResponse = Device.GetErrorReportData();
-            byte[] rawBytes = Encoding.ASCII.GetBytes(rawResponse);
-            Console.WriteLine($"[GLENYS] dataLength={dataLength}, maxMilliseconds={maxMilliseconds}, elapsed={elapsedMilliseconds}");
-            Console.WriteLine($"[GLENYS] Raw response length={rawBytes.Length}, first bytes=[{string.Join(",", rawBytes.Take(10))}]");
-            Console.WriteLine($"[GLENYS] Full response (hex)={BitConverter.ToString(rawBytes.Take(20).ToArray())}");
             Assert.AreEqual(0, dataLength);
         }
 

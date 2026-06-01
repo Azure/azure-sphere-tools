@@ -233,11 +233,11 @@ function Build-WithLocalPackage
     Write-Output "Using packages:"
     Invoke-Dotnet list $project package
     Write-Output "Building ${project}"
-    Invoke-Dotnet build $buildConfig $project --verbosity normal
+    Invoke-Dotnet build $buildConfig $project --no-incremental --verbosity normal
 
     Write-Output "Publishing to $publishLocation"
     if ($publishLocation) {
-        Invoke-Dotnet publish $buildConfig $project --verbosity normal --output $publishLocation
+        Invoke-Dotnet publish $buildConfig $project --force --no-restore --verbosity normal --output $publishLocation
     }
 
     Write-Output "Removing local feed"

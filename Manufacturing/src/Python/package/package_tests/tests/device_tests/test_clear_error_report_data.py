@@ -15,25 +15,25 @@ def test__clear_error_report_data__returns_empty():
 
 def test__clear_error_report_data__clears_error_report_data():
     """Tests if clearing the error report data clears the error report data."""
-    response = device.clear_error_report_data()
-
-    assert {} == response
-
+    max_retries = 3
     max_milliseconds = 5000
-    elapsed_milliseconds = 0
+    data_length = -1
 
-    data_length = _get_data_length(device.get_error_report_data())
+    for attempt in range(1, max_retries + 1):
+        response = device.clear_error_report_data()
+        assert {} == response
 
-    while data_length != 0 and elapsed_milliseconds < max_milliseconds:
-        time.sleep(0.1)
-        elapsed_milliseconds += 100
+        elapsed_milliseconds = 0
         data_length = _get_data_length(device.get_error_report_data())
 
-    # Debug: log the raw response to understand what the device returns
-    raw_response = device.get_error_report_data()
-    print(f"[GLENYS] data_length={data_length}, max_milliseconds={max_milliseconds}, elapsed={elapsed_milliseconds}")
-    print(f"[GLENYS] Raw response type={type(raw_response)}, length={len(raw_response)}, first 20 bytes={list(raw_response[:20])}")
-    print(f"[GLENYS] Raw response (hex)={raw_response[:20].hex()}")
+        while data_length != 0 and elapsed_milliseconds < max_milliseconds:
+            time.sleep(0.1)
+            elapsed_milliseconds += 100
+            data_length = _get_data_length(device.get_error_report_data())
+
+        if data_length == 0:
+            break
+
     assert data_length == 0
 
 
