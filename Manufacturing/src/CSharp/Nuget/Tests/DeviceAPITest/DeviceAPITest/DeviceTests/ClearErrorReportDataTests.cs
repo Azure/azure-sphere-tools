@@ -47,6 +47,7 @@ namespace TestDeviceRestAPI.DeviceTests
 
             }
 
+            Console.WriteLine($"[GLENYS] Using UPDATED DLL - dataLength={dataLength}, maxMilliseconds={maxMilliseconds}, elapsed={elapsedMilliseconds}");
             Assert.AreEqual(0, dataLength);
         }
 

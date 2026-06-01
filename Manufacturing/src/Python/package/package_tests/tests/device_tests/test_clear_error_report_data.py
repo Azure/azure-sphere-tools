@@ -29,6 +29,7 @@ def test__clear_error_report_data__clears_error_report_data():
         elapsed_milliseconds += 100
         data_length = _get_data_length(device.get_error_report_data())
 
+    print(f"[GLENYS] Using UPDATED package - data_length={data_length}, max_milliseconds={max_milliseconds}, elapsed={elapsed_milliseconds}")
     assert data_length == 0
 
 
