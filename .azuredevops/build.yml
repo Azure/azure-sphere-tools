@@ -6,7 +6,7 @@ resources:
     clean: true
     name: SdkBuildScripts
     type: git
-    ref: refs/heads/glcardoz/fixes-for-network-isolation # TODO: Temporary change, revert to refs/heads/main
+    ref: refs/heads/main
   - repository: oneBranchPipelines
     type: git
     name: OneBranch.Pipelines/GovernedTemplates
@@ -16,7 +16,7 @@ resources:
     type: github
     name: Azure/azure-sphere-tools
     endpoint: 4x4
-    ref: refs/heads/copilot/onboard-azure-sphere-tools # TODO: Temporary - revert to refs/heads/main after merge
+    ref: refs/heads/main
 trigger:
   branches:
     include:
