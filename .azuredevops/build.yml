@@ -16,6 +16,7 @@ resources:
     type: github
     name: Azure/azure-sphere-tools
     endpoint: 4x4
+    ref: refs/heads/main
 trigger:
   branches:
     include:
@@ -49,6 +50,8 @@ extends:
   template: /v2/OneBranch.NonOfficial.CrossPlat.yml@oneBranchPipelines
   parameters:
     featureFlags:
+      networkisolation:
+        policy: Permissive,CFSClean,CFSClean2,CFSClean3
       WindowsHostVersion:
         Version: 2022
         Network: KS1

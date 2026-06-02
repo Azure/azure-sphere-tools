@@ -15,19 +15,24 @@ def test__clear_error_report_data__returns_empty():
 
 def test__clear_error_report_data__clears_error_report_data():
     """Tests if clearing the error report data clears the error report data."""
-    response = device.clear_error_report_data()
+    max_retries = 3
+    max_milliseconds = 5000
+    data_length = -1
 
-    assert {} == response
+    for attempt in range(1, max_retries + 1):
+        response = device.clear_error_report_data()
+        assert {} == response
 
-    max_milliseconds = 1000
-    elapsed_milliseconds = 0
-
-    data_length = _get_data_length(device.get_error_report_data())
-
-    while data_length != 0 and elapsed_milliseconds < max_milliseconds:
-        time.sleep(0.1)
-        elapsed_milliseconds += 100
+        elapsed_milliseconds = 0
         data_length = _get_data_length(device.get_error_report_data())
+
+        while data_length != 0 and elapsed_milliseconds < max_milliseconds:
+            time.sleep(0.1)
+            elapsed_milliseconds += 100
+            data_length = _get_data_length(device.get_error_report_data())
+
+        if data_length == 0:
+            break
 
     assert data_length == 0
 

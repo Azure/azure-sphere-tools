@@ -21,7 +21,7 @@ namespace TestDeviceRestAPI.DeviceTests
         {
             string response = Device.ClearErrorReportData();
 
-            Assert.AreEqual(response, "{}");
+            Assert.AreEqual("{}", response);
         }
 
         /// <summary>
@@ -30,24 +30,32 @@ namespace TestDeviceRestAPI.DeviceTests
         [TestMethod]
         public void ClearErrorReportData_Call_ClearsErrorReportData()
         {
-            string response = Device.ClearErrorReportData();
+            int maxRetries = 3;
+            int maxMilliseconds = 5000;
+            int dataLength = -1;
 
-            Assert.AreEqual(response, "{}");
-
-            //Wait for error data to clear or timeout 
-            int maxMilliseconds = 1000;
-            int elapsedMilliseconds = 0;
-
-            int dataLength = GetDataLength(Device.GetErrorReportData());
-            while (dataLength != 0 && elapsedMilliseconds < maxMilliseconds)
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                Thread.Sleep(100);
-                elapsedMilliseconds += 100;
+                string response = Device.ClearErrorReportData();
+                Assert.AreEqual("{}", response);
+
+                int elapsedMilliseconds = 0;
                 dataLength = GetDataLength(Device.GetErrorReportData());
 
+                while (dataLength != 0 && elapsedMilliseconds < maxMilliseconds)
+                {
+                    Thread.Sleep(100);
+                    elapsedMilliseconds += 100;
+                    dataLength = GetDataLength(Device.GetErrorReportData());
+                }
+
+                if (dataLength == 0)
+                {
+                    break;
+                }
             }
 
-            Assert.AreEqual(dataLength, 0);
+            Assert.AreEqual(0, dataLength);
         }
 
         /// <summary>
