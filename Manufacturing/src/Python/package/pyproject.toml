@@ -27,7 +27,7 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
-    "requests==2.26.0",
+    "requests==2.32.0",
     "requests-toolbelt >= 0.9.1"
 ]
 requires-python = ">=3.8"
