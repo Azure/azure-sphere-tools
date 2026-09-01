@@ -20,15 +20,15 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@55ec9447dda3d1cf6bd587150f3262f30ee10815 # v3.4.2
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@296fd3ccf8528660c91106efefe2364482f86d6f # v1.2.0
+      uses: nuget/setup-nuget@b26b823c478ee115be5c9403e62c90b0bf943843 # v3.1.0
       with:
         nuget-version: latest
 
@@ -45,10 +45,10 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     
     steps:
-    - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - name: Setup Python
-      uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4.9.1
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
