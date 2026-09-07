@@ -24,6 +24,8 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
     /// </summary>
     public static class RestUtils
     {
+        private static uint DefaultTimeoutMs = 15000;
+
         // Read an embedded resource, return byte array or new byte[0] if the resource isn't found
         static byte[] GetEmbeddedResource(string name)
         {
@@ -89,6 +91,7 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
             };
 
             HttpClient httpClient = new(httpClientHandler) { BaseAddress = new Uri(url) };
+            httpClient.Timeout = TimeSpan.FromMilliseconds(DefaultTimeoutMs);
             return httpClient;
         }
 
@@ -100,7 +103,8 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
             try
             {
                 return request.GetAwaiter().GetResult();
-            } catch (HttpRequestException e)
+            }
+            catch (HttpRequestException e)
             {
                 // Catch timeout exception, bubble up all other exceptions.
                 if (e.Message.Contains("A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond."))
@@ -272,6 +276,25 @@ namespace Microsoft.Azure.Sphere.DeviceAPI
             content.Headers.Add("Content-Type", "application/octet-stream");
 
             return ErrorHandling.CheckResponse(MakeRequest(client.PutAsync(url, content)));
+        }
+
+        /// <summary>
+        /// Sets the default timeout for all requests.
+        /// </summary>
+        /// <param name="timeoutMs">The timeout in milliseconds.</param>
+        /// <returns>void</returns>
+        public static void SetRequestTimeout(uint timeoutMs)
+        {
+            DefaultTimeoutMs = timeoutMs;
+        }
+
+        /// <summary>
+        /// Retrieves the default timeout for all requests.
+        /// </summary>
+        /// <returns>The current request timeout in milliseconds</returns>
+        public static uint GetRequestTimeout()
+        {
+            return DefaultTimeoutMs;
         }
     }
 }

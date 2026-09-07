@@ -23,6 +23,8 @@ _SDK_VERSION = None
 CURRENT_DIR = Path(__file__).parent
 _CERT_PATH = (CURRENT_DIR / "certs/device_rest_api_certificate.pem").absolute()
 
+_REQUEST_TIMEOUT = 15.
+
 
 @unique
 class AzureSphereDeviceApiRequestType(Enum):
@@ -180,6 +182,7 @@ def get_request(api: str, api_type=AzureSphereDeviceApiRequestType.DEVICE_URL) -
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
+        timeout=_REQUEST_TIMEOUT
     ), api_type)
 
 
@@ -200,6 +203,7 @@ def delete_request(api: str) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -220,6 +224,7 @@ def post_request_no_body(api: str) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -242,7 +247,8 @@ def post_request(api: str, body: Any) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
-        json=body
+        json=body,
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -266,7 +272,8 @@ def patch_request(api: str, body: Any) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
-        json=body
+        json=body,
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -291,7 +298,8 @@ def put_request(api: str, body: Any) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=__device_rest_api_headers(),
-        json=body
+        json=body,
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -319,7 +327,8 @@ def put_request_octet_stream(api: str, body: Any) -> dict:
         verify=str(_CERT_PATH),
         allow_redirects=False,
         headers=devicerestapi_headers,
-        data=body
+        data=body,
+        timeout=_REQUEST_TIMEOUT
     ))
 
 
@@ -336,3 +345,22 @@ def is_uuid(uuid: str) -> bool:
         return True
     except (ValueError, TypeError):
         return False
+
+
+def set_request_timeout(timeout: float) -> None:
+    """Sets the timeout for requests.
+
+    :param timeout: The timeout in seconds.
+    :type timeout: float
+    """
+    global _REQUEST_TIMEOUT
+    _REQUEST_TIMEOUT = timeout
+
+
+def get_request_timeout() -> float:
+    """Gets the timeout for requests.
+
+    :returns: The timeout in seconds.
+    :rtype: float
+    """
+    return _REQUEST_TIMEOUT
